@@ -17,11 +17,14 @@ cron "20 * * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/
 汪汪乐园 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_joy_park.js, cronexpr="20 * * * *", timeout=3600, enable=true
  */
 const $ = new Env('汪汪乐园');
-//Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
+const notify = $.isNode() ? require('./sendNotify') : '';
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [],
     cookie = '';
+const JD_API_HOST = `https://api.m.jd.com`;
+codeList = []
+
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
@@ -31,22 +34,36 @@ if ($.isNode()) {
     cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 
-const JD_API_HOST = `https://api.m.jd.com`;
-codeList = []
+//最大化硬币收益模式
+$.JOY_COIN_MAXIMIZE = process.env.JOY_COIN_MAXIMIZE === '1'
+$.log(`最大化收益模式: 已${$.JOY_COIN_MAXIMIZE ? `默认已开启` : `关闭`}  `)
 
+message = ""
 !(async () => {
+    $.user_agent = require('./USER_AGENTS').USER_AGENT
     if (!cookiesArr[0]) {
-        $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {
-            "open-url": "https://bean.m.jd.com/bean/signIndex.action"
+        $.msg($.name, '【提示】请先获取cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {
+            "open-url": "https://bean.m.jd.com/"
         });
         return;
     }
     $.linkid = "LsQNxL7iWDlXUs6cFl-AAg"
-    for (let i = 0; i < cookiesArr.length ;  i++) {
+    for (let i = 0; i < cookiesArr.length; i++) {
+        //$.wait(50)
+        if (process.env.JOYPARK_JOY_START && i == process.env.JOYPARK_JOY_START){
+            console.log(`\n汪汪乐园养joy 只运行 ${process.env.JOYPARK_JOY_START} 个Cookie\n`);
+            break
+        }
+
         cookie = cookiesArr[i];
         if (cookie) {
+            $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
             $.index = i + 1;
-            console.log(`\n******【京东账号${$.index}】\n`);
+            $.isLogin = true;
+            $.nickName = '';
+            $.maxJoyCount = 10
+            console.log(`\n\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
+
             await getinfo()
             await geTasklist()
             if ($.taskList) {
@@ -74,18 +91,299 @@ codeList = []
                 }
 
             }
+            //下地后还有有钱买Joy并且买了Joy
+            $.hasJoyCoin = true
+            await getJoyBaseInfo();
+            $.activityJoyList = []
+            $.workJoyInfoList = []
+            await getJoyList(true);
+            await getGameShopList()
+            //清理工位
+            await doJoyMoveDownAll($.workJoyInfoList)
+            //从低合到高
+            await doJoyMergeAll($.activityJoyList)
+            await getJoyList(true)
         }
     }
-
-
-
 })()
-    .catch((e) => {
-        $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
+    .catch((e) => $.logErr(e))
+    .finally(() => $.done())
+
+
+function getJoyBaseInfo(taskId = '',inviteType = '',inviterPin = '') {
+    //await $.wait(20)
+    return new Promise(resolve => {
+        $.post(taskPostClientActionUrl(`body={"taskId":"${taskId}","inviteType":"${inviteType}","inviterPin":"${inviterPin}","linkId":"LsQNxL7iWDlXUs6cFl-AAg"}&_t=1625480372020&appid=activities_platform`,`joyBaseInfo`), async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} API请求失败，请检查网路重试`)
+                } else {
+                    data = JSON.parse(data);
+                    $.log(`等级: ${data.data.level}|金币: ${data.data.joyCoin}`)
+                    $.joyBaseInfo = data.data
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve($.joyBaseInfo);
+            }
+        })
     })
-    .finally(() => {
-        $.done();
+}
+
+function getJoyList(printLog = false){
+    //await $.wait(20)
+    return new Promise(resolve => {
+        $.get(taskGetClientActionUrl(`appid=activities_platform&body={"linkId":"LsQNxL7iWDlXUs6cFl-AAg"}`,`joyList`), async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} API请求失败，请检查网路重试`)
+                } else {
+                    data = JSON.parse(data);
+                    if (printLog) {
+                        $.log(`\n===== 【京东账号${$.index}】${$.nickName || $.UserName} joy 状态 start =====`)
+                        $.log("在逛街的joy⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️")
+                        for (let i = 0; i < data.data.activityJoyList.length; i++) {
+                            //$.wait(50);
+                            $.log(`id:${data.data.activityJoyList[i].id}|name: ${data.data.activityJoyList[i].name}|level: ${data.data.activityJoyList[i].level}`);
+                        }
+                        $.log("\n在铲土的joy⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️")
+                        for (let i = 0; i < data.data.workJoyInfoList.length; i++) {
+                            //$.wait(50)
+                            $.log(`工位: ${data.data.workJoyInfoList[i].location} [${data.data.workJoyInfoList[i].unlock ? `已开` : `未开`}]|joy= ${data.data.workJoyInfoList[i].joyDTO ? `id:${data.data.workJoyInfoList[i].joyDTO.id}|name: ${data.data.workJoyInfoList[i].joyDTO.name}|level: ${data.data.workJoyInfoList[i].joyDTO.level}` : `毛都没有`}`)
+                        }
+                        $.log(`===== 【京东账号${$.index}】${$.nickName || $.UserName} joy 状态  end  =====\n`)
+                    }
+                    $.activityJoyList = data.data.activityJoyList
+                    $.workJoyInfoList = data.data.workJoyInfoList
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve(data.data);
+            }
+        })
     })
+}
+
+function getGameShopList(){
+    //await $.wait(20)
+    return new Promise(resolve => {
+        $.get(taskGetClientActionUrl(`appid=activities_platform&body={"linkId":"LsQNxL7iWDlXUs6cFl-AAg"}`,`gameShopList`), async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} API请求失败，请检查网路重试`)
+                } else {
+                    //排除不能购买的
+                    data = JSON.parse(data).data.filter(row => row.shopStatus === 1);
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve(data);
+            }
+        })
+    })
+}
+
+async function doJoyMoveUpAll(activityJoyList, workJoyInfoList) {
+    let workJoyInfoUnlockList = workJoyInfoList.filter(row => row.unlock && row.joyDTO === null)
+    if (activityJoyList.length !== 0 && workJoyInfoUnlockList.length !== 0) {
+        let maxLevelJoy = Math.max.apply(Math, activityJoyList.map(function (o) {
+            return o.level
+        }))
+        let maxLevelJoyList = activityJoyList.filter(row => row.level === maxLevelJoy)
+        $.log(`下地干活！ joyId= ${maxLevelJoyList[0].id} location= ${workJoyInfoUnlockList[0].location}`)
+        await doJoyMove(maxLevelJoyList[0].id, workJoyInfoUnlockList[0].location)
+        await getJoyList()
+        await doJoyMoveUpAll($.activityJoyList, $.workJoyInfoList)
+    }else if ($.JOY_COIN_MAXIMIZE) {
+        await joyCoinMaximize(workJoyInfoUnlockList)
+    }
+
+}
+
+async function joyCoinMaximize(workJoyInfoUnlockList) {
+    if (workJoyInfoUnlockList.length !== 0 && $.hasJoyCoin) {
+        $.log(`竟然还有工位挖土？开启瞎买瞎下地模式！`);
+        let joyBaseInfo = await getJoyBaseInfo()
+        let joyCoin = joyBaseInfo.joyCoin
+        $.log(`还有${joyCoin}金币,看看还能买啥下地`)
+        let shopList = await getGameShopList()
+        let newBuyCount = false;
+        for (let i = shopList.length - 1;i >= 0;i--){
+            if (joyCoin > shopList[i].consume) {
+                $.log(`买一只 ${shopList[i].userLevel}级的！`);
+                joyCoin = joyCoin - shopList[i].consume;
+                let buyResp = await doJoyBuy(shopList[i].userLevel);
+                if (!buyResp.success) {
+                    break;
+                } else {
+                    newBuyCount = true
+                    $.hasJoyCoin = false
+                    i++
+                }
+            }
+        }
+        $.hasJoyCoin = false
+        if (newBuyCount) {
+            await getJoyList()
+            await doJoyMoveUpAll($.activityJoyList,$.workJoyInfoList)
+            await getJoyBaseInfo();
+        }
+    }
+}
+
+async function doJoyMoveDownAll(workJoyInfoList) {
+    if (workJoyInfoList.filter(row => row.joyDTO).length === 0) {
+        $.log(`工位清理完成！`)
+        return true
+    }
+    for (let i = 0; i < workJoyInfoList.length; i++) {
+        //$.wait(50)
+        if (workJoyInfoList[i].unlock && workJoyInfoList[i].joyDTO) {
+            $.log(`从工位移除 => id:${workJoyInfoList[i].joyDTO.id}|name: ${workJoyInfoList[i].joyDTO.name}|level: ${workJoyInfoList[i].joyDTO.level}`)
+            await doJoyMove(workJoyInfoList[i].joyDTO.id, 0)
+        }
+    }
+    //check
+    await getJoyList()
+    await doJoyMoveDownAll($.workJoyInfoList)
+}
+
+async function doJoyMergeAll(activityJoyList) {
+    let minLevel = Math.min.apply(Math, activityJoyList.map(function (o) {
+        return o.level
+    }))
+    let joyMinLevelArr = activityJoyList.filter(row => row.level === minLevel);
+    let joyBaseInfo = await getJoyBaseInfo()
+    let fastBuyLevel = joyBaseInfo.fastBuyLevel
+    if (joyMinLevelArr.length >= 2) {
+        $.log(`开始合成 ${minLevel} ${joyMinLevelArr[0].id} <=> ${joyMinLevelArr[1].id} 【限流严重，2秒后合成！如失败会重试】`);
+        await $.wait(2000)
+        await doJoyMerge(joyMinLevelArr[0].id, joyMinLevelArr[1].id);
+        await getJoyList()
+        await doJoyMergeAll($.activityJoyList)
+    } else if (joyMinLevelArr.length === 1 && joyMinLevelArr[0].level < fastBuyLevel) {
+        let buyResp = await doJoyBuy(joyMinLevelArr[0].level);
+        if (buyResp.success) {
+            await getJoyList();
+            await doJoyMergeAll($.activityJoyList);
+        } else {
+            $.log("没钱了上位吧！")
+            await doJoyMoveUpAll($.activityJoyList, $.workJoyInfoList)
+        }
+    } else {
+        $.log(`没有需要合成的joy 开始买买买🛒🛒🛒🛒🛒🛒🛒🛒`)
+        $.log(`现在最高可以购买: ${fastBuyLevel}  购买 ${fastBuyLevel} 的joy   你还有${joyBaseInfo.joyCoin}金币`)
+        let buyResp = await doJoyBuy(fastBuyLevel);
+        if (buyResp.success) {
+            await getJoyList();
+            await doJoyMergeAll($.activityJoyList);
+        } else {
+            $.log("没钱了上位吧！")
+            await doJoyMoveUpAll($.activityJoyList, $.workJoyInfoList)
+        }
+    }
+}
+
+function doJoyMove(joyId,location){
+    //await $.wait(20)
+    return new Promise(resolve => {
+        $.post(taskGetClientActionUrl(`body={"joyId":${joyId},"location":${location},"linkId":"LsQNxL7iWDlXUs6cFl-AAg"}&appid=activities_platform`,`joyMove`), async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} API请求失败，请检查网路重试`)
+                } else {
+                    if (location !== 0) {
+                        $.log(`下地完成了！`);
+                    }
+                    data = JSON.parse(data);
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve(data.data);
+            }
+        })
+    })
+}
+
+function doJoyMerge(joyId1,joyId2){
+    //await $.wait(20)
+    return new Promise(resolve => {
+        $.get(taskGetClientActionUrl(`body={"joyOneId":${joyId1},"joyTwoId":${joyId2},"linkId":"LsQNxL7iWDlXUs6cFl-AAg"}&appid=activities_platform`,`joyMergeGet`), async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} API请求失败，请检查网路重试`)
+                    data = {}
+                } else {
+                    data = JSON.parse(data);$.log(`合成 ${joyId1} <=> ${joyId2} ${data.success ? `成功！` : `失败！【${data.errMsg}】 code=${data.code}`}`)
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve(data.data);
+            }
+        })
+    })
+}
+
+function doJoyBuy(level){
+    //await $.wait(20)
+    return new Promise(resolve => {
+        $.post(taskPostClientActionUrl(`body={"level":${level},"linkId":"LsQNxL7iWDlXUs6cFl-AAg"}&appid=activities_platform`,`joyBuy`), async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} API请求失败，请检查网路重试`)
+                } else {
+                    data = JSON.parse(data);
+                    $.log(`购买joy level: ${level} ${data.success ? `成功！` : `失败！${data.errMsg} code=${data.code}`}`)
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve(data);
+            }
+        })
+    })
+}
+
+function taskPostClientActionUrl(body,functionId) {
+    return {
+        url: `https://api.m.jd.com/client.action?${functionId?`functionId=${functionId}`:``}`,
+        body: body,
+        headers: {
+            'User-Agent': $.user_agent,
+            'Content-Type':'application/x-www-form-urlencoded',
+            'Host':'api.m.jd.com',
+            'Origin':'https://joypark.jd.com',
+            'Referer':'https://joypark.jd.com/?activityId=LsQNxL7iWDlXUs6cFl-AAg&lng=113.387899&lat=22.512678&sid=4d76080a9da10fbb31f5cd43396ed6cw&un_area=19_1657_52093_0',
+            'Cookie': cookie,
+        }
+    }
+}
+
+function taskGetClientActionUrl(body,functionId) {
+    return {
+        url: `https://api.m.jd.com/client.action?functionId=${functionId}${body ? `&${body}` : ``}`,
+        // body: body,
+        headers: {
+            'User-Agent': $.user_agent,
+            'Content-Type':'application/x-www-form-urlencoded',
+            'Host':'api.m.jd.com',
+            'Origin':'https://joypark.jd.com',
+            'Referer':'https://joypark.jd.com/?activityId=LsQNxL7iWDlXUs6cFl-AAg&lng=113.388006&lat=22.512549&sid=4d76080a9da10fbb31f5cd43396ed6cw&un_area=19_1657_52093_0',
+            'Cookie': cookie,
+        }
+    }
+}
 
 
 
