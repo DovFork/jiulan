@@ -33,6 +33,9 @@ const REG_ENTRY = /(__webpack_require__\(__webpack_require__.s=)(\d+)(?=\)})/;
 const needModuleId = 356
 const DATA = {appid:'50085',sceneid:'OY217hPageh5'};
 let smashUtils;
+//是否兑换红包
+let withdraw = false;
+
 class MovementFaker {
   constructor(cookie) {this.cookie = cookie;this.ua = require('./USER_AGENTS.js').USER_AGENT;}
   async run() {if (!smashUtils) {await this.init();}
@@ -86,6 +89,10 @@ if ($.isNode()) {
     cookiesArr.push(jdCookieNode[item])
   })
   if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
+
+  if (process.env.JD_WITHDRAW && process.env.JD_WITHDRAW === 'true'){
+    withdraw = true;
+  }
 } else {
   cookiesArr = [
     $.getdata("CookieJD"),
@@ -245,6 +252,14 @@ async function main(){
   console.log('获取百元守卫战信息')
   $.guradHome = {};
   await takePostRequest('olypicgames_guradHome');
+  console.log('兑换红包-每天只能兑换20*2 + 5(有效期一周)')
+  console.log('是否自动兑换红包 使用变量JD_WITHDRAW 控制')
+  if (withdraw) {
+    console.log('开始兑换红包')
+    for (let i = 0; i < 4; i++) {
+      await takePostRequest('olympicgames_withdraw');
+    }
+  }
 }
 
 async function getBody($) {const zf = new MovementFaker($.cookie);const ss = await zf.run();return ss;}
@@ -456,6 +471,10 @@ async function takePostRequest(type) {
       body = `functionId=olympicgames_pawnshopRewardPop&body={"skuId":${$.Reward.skuId}}&client=wh5&clientVersion=1.0.0&appid=${$.appid}`;
       myRequest = await getPostRequest(body);
       break;
+    case 'olympicgames_withdraw':
+      body = `functionId=olympicgames_withdraw&body={}&client=wh5&clientVersion=1.0.0&uuid=${uuid}&appid=${$.appid}`;
+      myRequest = await getPostRequest(body);
+      break;
     default:
       console.log(`错误${type}`);
   }
@@ -507,7 +526,7 @@ async function dealReturn(type, data) {
       }else{
         //console.log(JSON.stringify(data));
       }
-      console.log(JSON.stringify(data));
+      console.log("olympicgames_receiveCash",JSON.stringify(data));
       break;
     case 'olympicgames_getTaskDetail':
       if (data.code === 0 && data.data.result) {
@@ -670,6 +689,15 @@ async function dealReturn(type, data) {
       if (data.data && data.data.bizCode === 0 && data.data.result) {
         console.log(res)
         console.log(`结果：${data.data.result.currencyReward && '额外奖励' + data.data.result.currencyReward + '卡币' || ''}`)
+      } else if (data.data && data.data.bizMsg) {
+        console.log(data.data.bizMsg);
+      } else {
+        console.log(res);
+      }
+      break;
+    case 'olympicgames_withdraw':
+      if (data.data && data.data.bizCode === 0) {
+        console.log("兑换红包成功")
       } else if (data.data && data.data.bizMsg) {
         console.log(data.data.bizMsg);
       } else {
