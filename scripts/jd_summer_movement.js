@@ -367,7 +367,7 @@ async function shop(){
     }
     if(taskbool) await $.wait(1000);
     let boxLotteryNum = $.shopResult.boxLotteryNum;
-    for (let j = 0; j < boxLotteryNum; j++) {
+    for (let j = 0; j <= boxLotteryNum; j++) {
       console.log(`开始第${j+1}次拆盒`)
       //抽奖
       await takePostRequest('olympicgames_boxShopLottery');
