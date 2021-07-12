@@ -9,14 +9,14 @@
 =================================Quantumultx=========================
 [task_local]
 #燃动夏季
-41 0,6-23/3 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_summer_movement.js, tag=燃动夏季, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+11 0,6-23/3 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_summer_movement.js, tag=燃动夏季, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 =================================Loon===================================
 [Script]
-cron "41 0,6-23/3 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_summer_movement.js,tag=燃动夏季
+cron "11 0,6-23/3 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_summer_movement.js,tag=燃动夏季
 ===================================Surge================================
-燃动夏季 = type=cron,cronexp="41 0,6-23/3 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_summer_movement.js
+燃动夏季 = type=cron,cronexp="11 0,6-23/3 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_summer_movement.js
 ====================================小火箭=============================
-燃动夏季 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_summer_movement.js, cronexpr="41 0,6-23/3 * * *", timeout=3600, enable=true
+燃动夏季 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_summer_movement.js, cronexpr="11 0,6-23/3 * * *", timeout=3600, enable=true
  */
 const $ = new Env('燃动夏季');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -127,23 +127,7 @@ if ($.isNode()) {
       }
     }
   }
-  if ($.inviteList.length > 0) console.log(`\n******开始内部京东账号【邀请好友助力】*********\n`);
-  for (let i = 0; i < cookiesArr.length; i++) {
-    $.cookie = cookiesArr[i];
-    $.canHelp = true;
-    $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
-    $.index = i + 1;
-    for (let j = 0; j < $.inviteList.length && $.canHelp; j++) {
-      $.oneInviteInfo = $.inviteList[j];
-      if ($.oneInviteInfo.ues === $.UserName || $.oneInviteInfo.max) {
-        continue;
-      }
-      $.inviteId = $.oneInviteInfo.inviteId;
-      console.log(`${$.UserName}去助力${$.oneInviteInfo.ues},助力码${$.inviteId}`);
-      await takePostRequest('help');
-      await $.wait(2000);
-    }
-  }
+
   let res = [];
   if(helpAuthorFlag){
     try{
@@ -164,6 +148,23 @@ if ($.isNode()) {
         await takePostRequest('byHelp');
         await $.wait(1000);
       }
+    }
+  }
+  if ($.inviteList.length > 0) console.log(`\n******开始内部京东账号【邀请好友助力】*********\n`);
+  for (let i = 0; i < cookiesArr.length; i++) {
+    $.cookie = cookiesArr[i];
+    $.canHelp = true;
+    $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
+    $.index = i + 1;
+    for (let j = 0; j < $.inviteList.length && $.canHelp; j++) {
+      $.oneInviteInfo = $.inviteList[j];
+      if ($.oneInviteInfo.ues === $.UserName || $.oneInviteInfo.max) {
+        continue;
+      }
+      $.inviteId = $.oneInviteInfo.inviteId;
+      console.log(`${$.UserName}去助力${$.oneInviteInfo.ues},助力码${$.inviteId}`);
+      await takePostRequest('help');
+      await $.wait(2000);
     }
   }
   try{
