@@ -250,9 +250,10 @@ async function main(){
   await $.wait(1000)
   await doTask();
   console.log('获取百元守卫战信息')
+  console.log('===========================')
   $.guradHome = {};
   await takePostRequest('olypicgames_guradHome');
-  console.log('兑换红包-每天只能兑换20*2 + 5(有效期一周)')
+  console.log('===========================')
   console.log('是否自动兑换红包 使用变量JD_WITHDRAW 控制')
   if (withdraw) {
     console.log('开始兑换红包')
@@ -287,7 +288,6 @@ async function doTask(){
           await $.wait(2000);
           console.log(`任务完成`);
         } else {
-          console.log($.callbackInfo);
           console.log(`任务失败`);
           await $.wait(3000);
         }
@@ -323,7 +323,6 @@ async function doTask(){
           await $.wait(2000);
           console.log(`任务完成`);
         } else {
-          console.log($.callbackInfo);
           console.log(`任务失败`);
           await $.wait(3000);
         }
