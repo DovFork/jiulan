@@ -7,14 +7,14 @@
 =================================Quantumultx=========================
 [task_local]
 #京喜财富岛
-10 6-23/1 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd.js, tag=京喜财富岛, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+10 6-23/1 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_new.js, tag=京喜财富岛, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 =================================Loon===================================
 [Script]
-cron "10 6-23/1 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd.js,tag=京喜财富岛
+cron "10 6-23/1 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_new.js,tag=京喜财富岛
 ===================================Surge================================
-京喜财富岛 = type=cron,cronexp="10 6-23/1 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd.js
+京喜财富岛 = type=cron,cronexp="10 6-23/1 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_new.js
 ====================================小火箭=============================
-京喜财富岛 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd.js, cronexpr="10 6-23/1 * * *", timeout=3600, enable=true
+京喜财富岛 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_new.js, cronexpr="10 6-23/1 * * *", timeout=3600, enable=true
  */
 const $ = new Env("京喜财富岛");
 const JD_API_HOST = "https://m.jingxi.com/";
@@ -997,11 +997,11 @@ function requireConfig() {
     return new Promise(resolve => {
         console.log(`开始获取${$.name}配置文件\n`);
         let shareCodes = [];
-        if ($.isNode() && process.env.JDCFD_SHARECODES) {
-            if (process.env.JDCFD_SHARECODES.indexOf('\n') > -1) {
-                shareCodes = process.env.JDCFD_SHARECODES.split('\n');
+        if ($.isNode() && process.env.CFD_SHARECODES) {
+            if (process.env.CFD_SHARECODES.indexOf('\n') > -1) {
+                shareCodes = process.env.CFD_SHARECODES.split('\n');
             } else {
-                shareCodes = process.env.JDCFD_SHARECODES.split('&');
+                shareCodes = process.env.CFD_SHARECODES.split('&');
             }
         }
         $.shareCodesArr = [];
