@@ -347,7 +347,6 @@ async function shop(){
     console.log(`执行第${i+1}个店铺任务：${$.shopInfoList[i].name} ID:${$.shopSign}`);
     $.shopResult = {};
     await takePostRequest('olympicgames_shopLotteryInfo');
-    console.log(`执行第${i+1}个店铺任务：${$.shopInfoList[i].name} ID:${$.shopSign}==== shopResult==`, $.shopResult);
     await $.wait(1000);
     if(JSON.stringify($.shopResult) === `{}`) continue;
     $.shopTask = $.shopResult.taskVos || [];
