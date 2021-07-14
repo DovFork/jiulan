@@ -35,7 +35,7 @@ const DATA = {appid:'50085',sceneid:'OY217hPageh5'};
 let smashUtils;
 //是否兑换红包
 let withdraw = false;
-
+const UA = $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : "jdapp;iPhone;10.0.8;15.0;239fef5700934564335c2519c4a5b764e8fca656;network/wifi;model/iPhone10,3;addressid/827662943;appBuild/167740;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1") : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;10.0.8;15.0;239fef5700934564335c2519c4a5b764e8fca656;network/wifi;model/iPhone10,3;addressid/827662943;appBuild/167740;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1")
 class MovementFaker {
   constructor(cookie) {this.cookie = cookie;this.ua = require('./USER_AGENTS.js').USER_AGENT;}
   async run() {if (!smashUtils) {await this.init();}
@@ -813,7 +813,7 @@ function getAuthorShareCode(url) {
       "url": `${url}`,
       "timeout": 10000,
       "headers": {
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+        "User-Agent": UA
       }
     };
     if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
