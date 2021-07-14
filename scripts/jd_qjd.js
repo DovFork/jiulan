@@ -33,6 +33,7 @@ if ($.isNode()) {
 } else {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
+$.helpStatus = true;
 const JD_API_HOST = 'https://car-member.jd.com/api/';
 !(async () => {
   if (!cookiesArr[0]) {
@@ -66,8 +67,12 @@ const JD_API_HOST = 'https://car-member.jd.com/api/';
           console.log(`${$.UserName}跳过助力自己`)
           continue
         }
+        if (!$.helpStatus) {
+            continue
+        }
         await doHelp($.groupCode, $.shareCode, $.activityId)
         await $.wait(1000)
+
       }
     }
   }
@@ -140,9 +145,16 @@ function doHelp (groupCode, shareCode, activityId) {
         }
     },(err, resp, data) => {
             data = JSON.parse(data.replace(/jsonp_\d*_\d*\(/, '').replace(/\);?/, ''))
-            let { helpToast } = data.data
+        let { helpToast } = data.data
+        let { respCode } = data.data
+        if (respCode === 'SG209'){
             console.log(helpToast)
-            resolve()
+            $.helpStatus = false;
+        }else {
+            console.log(helpToast)
+        }
+
+        resolve()
         })
     })
 }
