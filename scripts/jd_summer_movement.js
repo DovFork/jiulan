@@ -9,14 +9,14 @@
 =================================Quantumultx=========================
 [task_local]
 #燃动夏季
-11 0,6-23/3 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_summer_movement.js, tag=燃动夏季, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+11 8-23/3 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_summer_movement.js, tag=燃动夏季, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 =================================Loon===================================
 [Script]
-cron "11 0,6-23/3 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_summer_movement.js,tag=燃动夏季
+cron "11 8-23/3 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_summer_movement.js,tag=燃动夏季
 ===================================Surge================================
-燃动夏季 = type=cron,cronexp="11 0,6-23/3 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_summer_movement.js
+燃动夏季 = type=cron,cronexp="11 8-23/3 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_summer_movement.js
 ====================================小火箭=============================
-燃动夏季 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_summer_movement.js, cronexpr="11 0,6-23/3 * * *", timeout=3600, enable=true
+燃动夏季 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_summer_movement.js, cronexpr="11 8-23/3 * * *", timeout=3600, enable=true
  */
 const $ = new Env('燃动夏季');
 const notify = $.isNode() ? require('./sendNotify') : '';
