@@ -26,7 +26,7 @@ $.result = [];
 $.shareCodes = [];
 let cookiesArr = [], cookie = '', token;
 
-const randomCount = $.isNode() ? 3 : 3;
+const randomCount = $.isNode() ? 3 : 0;
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
@@ -45,6 +45,7 @@ $.appId = 10028;
     }
     $.CryptoJS = $.isNode() ? require('crypto-js') : CryptoJS;
     await requestAlgo();
+    await $.wait(1000)
     let res = await getAuthorShareCode('https://ghproxy.com/https://raw.githubusercontent.com/jiulan/platypus/main/json/cfd.json')
     $.strGroupIds = [...(res  || [])]
     for (let i = 0; i < cookiesArr.length; i++) {
@@ -96,34 +97,55 @@ $.appId = 10028;
             }
         }
     }
-    // await showMsg();
+    await showMsg();
 })()
     .catch((e) => $.logErr(e))
     .finally(() => $.done());
 
 async function cfd() {
     try {
-        const beginInfo = await getUserInfo();
+        let beginInfo = await getUserInfo();
         if (beginInfo.Fund.ddwFundTargTm === 0) {
-            console.log(`还未开通活动，请先开通\n`)
-            return
+            console.log(`还未开通活动，尝试初始化`)
+            await noviceTask()
+            await $.wait(2000)
+            beginInfo = await getUserInfo(false);
+            if (beginInfo.Fund.ddwFundTargTm !== 0) {
+                console.log(`初始化成功\n`)
+            } else {
+                console.log(`初始化失败\n`)
+                return
+            }
         }
 
         //每日签到
         await $.wait(2000)
-        await getTakeAggrPage()
+        await getTakeAggrPage('sign')
+
+        //助力奖励
+        await $.wait(2000)
+        await getTakeAggrPage('helpdraw')
 
         //卖贝壳
         await $.wait(2000)
         await querystorageroom()
 
-        //倒垃圾
-        // await $.wait(2000)
-        // await queryRubbishInfo()
-
         //每日任务领奖
         await $.wait(2000)
         await getActTask()
+
+        //升级建筑
+        await $.wait(2000)
+        for(let key of Object.keys($.info.buildInfo.buildList)) {
+            let vo = $.info.buildInfo.buildList[key]
+            let body = `strBuildIndex=${vo.strBuildIndex}`
+            await getBuildInfo(body, vo.strBuildIndex)
+            await $.wait(1000)
+        }
+
+        //倒垃圾
+        await $.wait(2000)
+        await queryRubbishInfo()
 
         //雇导游
         await $.wait(2000);
@@ -142,15 +164,7 @@ async function cfd() {
         await $.wait(2000);
         await browserTask(1);
 
-        //建筑升级
-        await $.wait(2000)
-        for(let key of Object.keys($.info.buildInfo.buildList)) {
-            let vo = $.info.buildInfo.buildList[key]
-            let body = `strBuildIndex=${vo.strBuildIndex}`
-            await getBuildInfo(body, vo.strBuildIndex)
-            await $.wait(1000)
-        }
-
+        await $.wait(2000);
         const endInfo = await getUserInfo(false);
         $.result.push(
             `【京东账号${$.index}】${$.nickName || $.UserName}`,
@@ -218,9 +232,9 @@ function sellgoods(body) {
                 } else {
                     data = JSON.parse(data);
                     if (data.iRet === 0) {
-                        console.log(`贝壳出售成功：获得${data.Data.ddwCoin}金币、${data.Data.ddwMoney}财富\n`)
+                        console.log(`贝壳出售成功：获得${data.Data.ddwCoin}金币 ${data.Data.ddwMoney}财富\n`)
                     } else {
-                        console.log(`贝壳出售失败`)
+                        console.log(`贝壳出售失败：${data.sErrMsg}\n`)
                     }
                 }
             } catch (e) {
@@ -233,36 +247,74 @@ function sellgoods(body) {
 }
 
 // 每日签到
-async function getTakeAggrPage() {
+async function getTakeAggrPage(type) {
     return new Promise(async (resolve) => {
-        $.get(taskUrl(`story/GetTakeAggrPage`), async (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(`${JSON.stringify(err)}`)
-                    console.log(`${$.name} GetTakeAggrPage API请求失败，请检查网路重试`)
-                } else {
-                    data = JSON.parse(data);
-                    console.log(`每日签到`)
-                    for (let key of Object.keys(data.Data.Sign.SignList)) {
-                        let vo = data.Data.Sign.SignList[key]
-                        if (vo.dwDayId === data.Data.Sign.dwTodayId) {
-                            if (vo.dwStatus !== 1) {
-                                const body = `ddwCoin=${vo.ddwCoin}&ddwMoney=${vo.ddwMoney}&dwPrizeType=${vo.dwPrizeType}&strPrizePool=${vo.strPrizePool}&dwPrizeLv=${vo.dwBingoLevel}`
-                                await rewardSign(body)
-                                await $.wait(1000)
-                            } else {
-                                console.log(`今日已签到\n`)
-                                break
+        switch (type) {
+            case 'sign':
+                $.get(taskUrl(`story/GetTakeAggrPage`), async (err, resp, data) => {
+                    try {
+                        if (err) {
+                            console.log(`${JSON.stringify(err)}`)
+                            console.log(`${$.name} GetTakeAggrPage API请求失败，请检查网路重试`)
+                        } else {
+                            data = JSON.parse(data);
+                            console.log(`每日签到`)
+                            for (let key of Object.keys(data.Data.Sign.SignList)) {
+                                let vo = data.Data.Sign.SignList[key]
+                                if (vo.dwDayId === data.Data.Sign.dwTodayId) {
+                                    if (vo.dwStatus !== 1) {
+                                        const body = `ddwCoin=${vo.ddwCoin}&ddwMoney=${vo.ddwMoney}&dwPrizeType=${vo.dwPrizeType}&strPrizePool=${vo.strPrizePool}&dwPrizeLv=${vo.dwBingoLevel}`
+                                        await rewardSign(body)
+                                        await $.wait(1000)
+                                    } else {
+                                        console.log(`今日已签到\n`)
+                                        break
+                                    }
+                                }
                             }
                         }
+                    } catch (e) {
+                        $.logErr(e, resp);
+                    } finally {
+                        resolve();
                     }
-                }
-            } catch (e) {
-                $.logErr(e, resp);
-            } finally {
-                resolve();
-            }
-        })
+                })
+                break
+            case 'helpdraw':
+                $.get(taskUrl(`story/GetTakeAggrPage`), async (err, resp, data) => {
+                    try {
+                        if (err) {
+                            console.log(`${JSON.stringify(err)}`)
+                            console.log(`${$.name} GetTakeAggrPage API请求失败，请检查网路重试`)
+                        } else {
+                            data = JSON.parse(data);
+                            console.log(`领助力奖励`)
+                            let helpNum = []
+                            for (let key of Object.keys(data.Data.Employee.EmployeeList)) {
+                                let vo = data.Data.Employee.EmployeeList[key]
+                                if (vo.dwStatus !== 1) {
+                                    helpNum.push(vo.dwId)
+                                }
+                            }
+                            if (helpNum.length !== 0) {
+                                for (let j = 0; j < helpNum.length; j++) {
+                                    await helpdraw(helpNum[j])
+                                    await $.wait(2000)
+                                }
+                            } else {
+                                console.log(`暂无可领助力奖励`)
+                            }
+                        }
+                    } catch (e) {
+                        $.logErr(e, resp);
+                    } finally {
+                        resolve();
+                    }
+                })
+                break
+            default:
+                break
+        }
     })
 }
 function rewardSign(body) {
@@ -276,12 +328,39 @@ function rewardSign(body) {
                     data = JSON.parse(data);
                     if (data.iRet === 0 || data.sErrMsg === "success") {
                         if (data.Data.ddwCoin) {
-                            console.log(`签到成功，获得${data.Data.ddwCoin}金币\n`)
+                            console.log(`签到成功：获得${data.Data.ddwCoin}金币\n`)
                         } else if (data.Data.ddwMoney) {
-                            console.log(`签到成功，获得${data.Data.ddwMoney}财富\n`)
+                            console.log(`签到成功：获得${data.Data.ddwMoney}财富\n`)
                         } else if (data.Data.strPrizeName) {
-                            console.log(`签到成功，获得${data.Data.strPrizeName}\n`)
+                            console.log(`签到成功：获得${data.Data.strPrizeName}\n`)
+                        } else {
+                            console.log(`签到成功：很遗憾未中奖~\n`)
                         }
+                    } else {
+                        console.log(`签到失败：${data.sErrMsg}\n`)
+                    }
+                }
+            } catch (e) {
+                $.logErr(e, resp);
+            } finally {
+                resolve();
+            }
+        })
+    })
+}
+function helpdraw(dwUserId) {
+    return new Promise((resolve) => {
+        $.get(taskUrl(`story/helpdraw`, `dwUserId=${dwUserId}`), (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} helpdraw API请求失败，请检查网路重试`)
+                } else {
+                    data = JSON.parse(data);
+                    if (data.iRet === 0 || data.sErrMsg === "success") {
+                        console.log(`领取助力奖励成功：获得${data.Data.ddwCoin}金币`)
+                    } else {
+                        console.log(`领取助力奖励失败：${data.sErrMsg}`)
                     }
                 }
             } catch (e) {
@@ -303,16 +382,23 @@ async function queryRubbishInfo() {
                     console.log(`${$.name} QueryRubbishInfo API请求失败，请检查网路重试`)
                 } else {
                     data = JSON.parse(data);
+                    console.log(`倒垃圾`)
                     if (data.Data.StoryInfo.StoryList.length === 0) {
-                        console.log(`暂时没有垃圾`)
+                        console.log(`暂时没有垃圾\n`)
                     } else {
                         console.log(`获取到垃圾信息，开始倒垃圾`)
+                        await $.wait(2000)
                         let rubbishOperRes = await rubbishOper('1')
-                        let RubbishList = rubbishOperRes.Data.ThrowRubbish.Game.RubbishList
-                        for(let key of Object.keys(RubbishList)) {
-                            let vo = RubbishList[key]
-                            await rubbishOper('2', `dwRubbishId=${vo.dwId}`)
-                            await $.wait(1000)
+                        for(let key of Object.keys(rubbishOperRes.Data.ThrowRubbish.Game.RubbishList)) {
+                            let vo = rubbishOperRes.Data.ThrowRubbish.Game.RubbishList[key]
+                            await $.wait(2000)
+                            var rubbishOperTwoRes = await rubbishOper('2', `dwRubbishId=${vo.dwId}`)
+                        }
+                        if (rubbishOperTwoRes.iRet === 0) {
+                            let AllRubbish = rubbishOperTwoRes.Data.RubbishGame.AllRubbish
+                            console.log(`倒垃圾成功：获得${AllRubbish.ddwCoin}金币 ${AllRubbish.ddwMoney}财富\n`)
+                        } else {
+                            console.log(`倒垃圾失败：${rubbishOperTwoRes.sErrMsg}\n`)
                         }
                     }
                 }
@@ -328,7 +414,7 @@ function rubbishOper(dwType, body = '') {
     return new Promise((resolve) => {
         switch(dwType) {
             case '1':
-                $.get(taskUrl(`story/RubbishOper`, `dwType=1&dwRewardType=0&${body}`), (err, resp, data) => {
+                $.get(taskUrl(`story/RubbishOper`, `dwType=1&dwRewardType=0`), (err, resp, data) => {
                     try {
                         if (err) {
                             console.log(`${JSON.stringify(err)}`)
@@ -344,19 +430,18 @@ function rubbishOper(dwType, body = '') {
                 })
                 break
             case '2':
-                $.get(taskUrl(`story/RubbishOper`, `dwType=2&dwRewardType=0${body}`), (err, resp, data) => {
+                $.get(taskUrl(`story/RubbishOper`, `dwType=2&dwRewardType=0&${body}`), (err, resp, data) => {
                     try {
                         if (err) {
                             console.log(`${JSON.stringify(err)}`)
                             console.log(`${$.name} RubbishOper API请求失败，请检查网路重试`)
                         } else {
                             data = JSON.parse(data);
-                            console.log(data)
                         }
                     } catch (e) {
                         $.logErr(e, resp);
                     } finally {
-                        resolve();
+                        resolve(data);
                     }
                 })
                 break
@@ -480,7 +565,11 @@ function employTourGuide(body, buildNmae) {
                     console.log(`${$.name} EmployTourGuide API请求失败，请检查网路重试`)
                 } else {
                     data = JSON.parse(data);
-                    if (data.iRet === 0) console.log(`【${buildNmae}】雇佣导游成功`)
+                    if (data.iRet === 0) {
+                        console.log(`【${buildNmae}】雇佣导游成功`)
+                    } else {
+                        console.log(`【${buildNmae}】导游下班了~`)
+                    }
                 }
             } catch (e) {
                 $.logErr(e, resp);
@@ -491,8 +580,9 @@ function employTourGuide(body, buildNmae) {
     })
 }
 
-// 建筑升级
-async function getBuildInfo(body, strBuildIndex) {
+// 升级建筑
+async function getBuildInfo(body, strBuildIndex, type = true) {
+    let twobody = body
     return new Promise(async (resolve) => {
         $.get(taskUrl(`user/GetBuildInfo`, body), async (err, resp, data) => {
             try {
@@ -501,48 +591,59 @@ async function getBuildInfo(body, strBuildIndex) {
                     console.log(`${$.name} GetBuildInfo API请求失败，请检查网路重试`)
                 } else {
                     data = JSON.parse(data);
-                    let buildNmae;
-                    switch(strBuildIndex) {
-                        case 'food':
-                            buildNmae = '京喜美食城'
-                            break
-                        case 'sea':
-                            buildNmae = '京喜旅馆'
-                            break
-                        case 'shop':
-                            buildNmae = '京喜商店'
-                            break
-                        case 'fun':
-                            buildNmae = '京喜游乐场'
-                        default:
-                            break
-                    }
-                    console.log(`收金币`)
-                    const body = `strBuildIndex=${data.strBuildIndex}&dwType=1`
-                    let collectCoinRes = await collectCoin(body)
-                    console.log(`【${buildNmae}】收集${collectCoinRes.ddwCoin}金币`)
-                    await $.wait(2000)
-                    await getUserInfo(false)
-                    console.log(`建筑升级`)
-                    console.log(`【${buildNmae}】升级需要${data.ddwNextLvlCostCoin}金币，当前拥有${$.info.ddwCoinBalance}`)
-                    if(data.dwCanLvlUp === 1 && $.info.ddwCoinBalance >= data.ddwNextLvlCostCoin) {
-                        console.log(`【${buildNmae}】满足升级条件，开始升级`)
-                        const body = `ddwCostCoin=${data.ddwNextLvlCostCoin}&strBuildIndex=${data.strBuildIndex}`
-                        let buildLvlUpRes = await buildLvlUp(body)
-                        if (buildLvlUpRes.iRet === 0) {
-                            console.log(`【${buildNmae}】升级成功\n`)
-                        } else {
-                            console.log(`${buildLvlUpRes}\n`)
+                    if (type) {
+                        let buildNmae;
+                        switch(strBuildIndex) {
+                            case 'food':
+                                buildNmae = '京喜美食城'
+                                break
+                            case 'sea':
+                                buildNmae = '京喜旅馆'
+                                break
+                            case 'shop':
+                                buildNmae = '京喜商店'
+                                break
+                            case 'fun':
+                                buildNmae = '京喜游乐场'
+                            default:
+                                break
+                        }
+                        // console.log(data)
+                        if (data.dwBuildLvl === 0) {
+                            console.log(`创建建筑`)
+                            console.log(`【${buildNmae}】当前建筑还未创建，开始创建`)
+                            await createbuilding(`strBuildIndex=${data.strBuildIndex}`, buildNmae)
+                            await $.wait(2000)
+                            data = await getBuildInfo(twobody, strBuildIndex, false)
                             await $.wait(2000)
                         }
-                    } else {
-                        console.log(`【${buildNmae}】不满足升级条件，跳过升级\n`)
+                        console.log(`收金币`)
+                        const body = `strBuildIndex=${data.strBuildIndex}&dwType=1`
+                        let collectCoinRes = await collectCoin(body)
+                        console.log(`【${buildNmae}】收集${collectCoinRes.ddwCoin}金币`)
+                        await $.wait(2000)
+                        await getUserInfo(false)
+                        console.log(`升级建筑`)
+                        console.log(`【${buildNmae}】升级需要${data.ddwNextLvlCostCoin}金币，当前拥有${$.info.ddwCoinBalance}`)
+                        if(data.dwCanLvlUp === 1 && $.info.ddwCoinBalance >= data.ddwNextLvlCostCoin) {
+                            console.log(`【${buildNmae}】满足升级条件，开始升级`)
+                            const body = `ddwCostCoin=${data.ddwNextLvlCostCoin}&strBuildIndex=${data.strBuildIndex}`
+                            let buildLvlUpRes = await buildLvlUp(body)
+                            if (buildLvlUpRes.iRet === 0) {
+                                console.log(`【${buildNmae}】升级成功\n`)
+                            } else {
+                                console.log(`${buildLvlUpRes}\n`)
+                                await $.wait(2000)
+                            }
+                        } else {
+                            console.log(`【${buildNmae}】不满足升级条件，跳过升级\n`)
+                        }
                     }
                 }
             } catch (e) {
                 $.logErr(e, resp);
             } finally {
-                resolve();
+                resolve(data);
             }
         })
     })
@@ -583,6 +684,25 @@ function buildLvlUp(body) {
         })
     })
 }
+function createbuilding(body, buildNmae) {
+    return new Promise(async (resolve) => {
+        $.get(taskUrl(`user/createbuilding`, body), (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} createbuilding API请求失败，请检查网路重试`)
+                } else {
+                    data = JSON.parse(data);
+                    if (data.iRet === 0) console.log(`【${buildNmae}】创建成功`)
+                }
+            } catch (e) {
+                $.logErr(e, resp);
+            } finally {
+                resolve();
+            }
+        })
+    })
+}
 
 // 助力
 function helpByStage(shareCodes) {
@@ -599,8 +719,13 @@ function helpByStage(shareCodes) {
                     } else if (data.iRet === 2232 || data.sErrMsg === '今日助力次数达到上限，明天再来帮忙吧~') {
                         console.log(data.sErrMsg)
                         $.canHelp = false
-                    } else {
+                    } else if (data.iRet === 9999 || data.sErrMsg === '您还没有登录，请先登录哦~') {
+                        console.log(data.sErrMsg)
                         $.canHelp = false
+                    } else if (data.iRet === 2229 || data.sErrMsg === '助力失败啦~') {
+                        console.log(data.sErrMsg)
+                        // $.canHelp = false
+                    } else {
                         console.log(data.sErrMsg)
                     }
                 }
@@ -675,7 +800,7 @@ function getUserInfo(showInvite = true) {
                     }
                     if (showInvite && strMyShareId) {
                         console.log(`财富岛好友互助码每次运行都变化,旧的可继续使用`);
-                        console.log(`\n【京东账号${$.index} ${$.UserName} 的${$.name}好友互助码】${strMyShareId}\n\n`);
+                        $.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${strMyShareId}\n\n`);
                         $.shareCodes.push(strMyShareId)
                     }
                     $.info = {
@@ -770,10 +895,10 @@ function browserTask(taskType) {
                 for (let i = 0; i < $.allTask.length; i++) {
                     const start = $.allTask[i].completedTimes, end = $.allTask[i].targetTimes
                     const taskinfo = $.allTask[i];
-                    console.log(`开始第${i + 1}个【📆日常任务】：${taskinfo.taskName}\n`);
+                    console.log(`开始第${i + 1}个【📆日常任务】${taskinfo.taskName}\n`);
                     for (let i = start; i < end; i++) {
                         //做任务
-                        console.log(`【📆日常任务】：${taskinfo.taskName} 进度：${i + 1}/${end}`)
+                        console.log(`【📆日常任务】${taskinfo.taskName} 进度：${i + 1}/${end}`)
                         await doTask(taskinfo);
                         await $.wait(2000);
                     }
@@ -784,7 +909,7 @@ function browserTask(taskType) {
             case 1://成就任务
                 for (let i = 0; i < $.allTask.length; i++) {
                     const taskinfo = $.allTask[i];
-                    console.log(`开始第${i + 1}个【🎖成就任务】：${taskinfo.taskName}\n`);
+                    console.log(`开始第${i + 1}个【🎖成就任务】${taskinfo.taskName}\n`);
                     if(taskinfo.completedTimes < taskinfo.targetTimes){
                         console.log(`【领成就奖励】${taskinfo.taskName} 该成就任务未达到门槛\n`);
                     } else {
@@ -867,7 +992,7 @@ function awardTask(taskType, taskinfo) {
                             if(msg.indexOf('活动太火爆了') !== -1) {
                                 console.log(`活动太火爆了`)
                             } else {
-                                console.log(`【领成就奖励】${taskName} 获得财富值：¥ ${JSON.parse(prizeInfo).ddwMoney}\n${$.showLog ? data : ''}`);
+                                console.log(`【领成就奖励】${taskName} 获得财富值 ¥ ${JSON.parse(prizeInfo).ddwMoney}\n${$.showLog ? data : ''}`);
                             }
                         }
                     } catch (e) {
@@ -883,7 +1008,77 @@ function awardTask(taskType, taskinfo) {
     });
 }
 
-function taskUrl(function_path, body) {
+// 新手任务
+async function noviceTask(){
+    let body = ``
+    await init(`user/guideuser`, body)
+    body = `strMark=guider_step&strValue=welcom&dwType=2`
+    await init(`user/SetMark`, body)
+    body = `strMark=guider_over_flag&strValue=999&dwType=2`
+    await init(`user/SetMark`, body)
+    body = `strMark=guider_step&strValue=999&dwType=2`
+    await init(`user/SetMark`, body)
+    body = `strMark=guider_step&strValue=999&dwType=2`
+    await init(`user/SetMark`, body)
+    body = `strMark=guider_over_flag&strValue=999&dwType=2`
+    await init(`user/SetMark`, body)
+    body = `strMark=guider_step&strValue=gift_redpack&dwType=2`
+    await init(`user/SetMark`, body)
+    body = `strMark=guider_step&strValue=none&dwType=2`
+    await init(`user/SetMark`, body)
+}
+async function init(function_path, body) {
+    return new Promise(async (resolve) => {
+        $.get(taskUrl(function_path, body), async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} init API请求失败，请检查网路重试`)
+                } else {
+                    if (function_path == "user/SetMark") opId = 23
+                    if (function_path == "user/guideuser") opId = 27
+                    data = JSON.parse(data);
+                    contents = `1771|${opId}|${data.iRet}|0|${data.sErrMsg || 0}`
+                    await biz(contents)
+                }
+            } catch (e) {
+                $.logErr(e, resp);
+            } finally {
+                resolve();
+            }
+        })
+    })
+}
+function biz(contents){
+    return new Promise(async (resolve) => {
+        let option = {
+            url:`https://m.jingxi.com/webmonitor/collect/biz.json?contents=${contents}&t=${Math.random()}&sceneval=2`,
+            headers: {
+                Cookie: cookie,
+                Accept: "*/*",
+                Connection: "keep-alive",
+                Referer: "https://st.jingxi.com/fortune_island/index.html?ptag=138631.26.55",
+                "Accept-Encoding": "gzip, deflate, br",
+                Host: 'm.jingxi.com',
+                "User-Agent": `jdpingou;iPhone;3.15.2;14.2.1;ea00763447803eb0f32045dcba629c248ea53bb3;network/wifi;model/iPhone13,2;appBuild/100365;ADID/00000000-0000-0000-0000-000000000000;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/0;hasOCPay/0;supportBestPay/0;session/${Math.random * 98 + 1};pap/JA2015_311210;brand/apple;supportJDSHWK/1;Mozilla/5.0 (iPhone; CPU iPhone OS 14_2_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148`,
+                "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+            }
+        }
+        $.get(option, async (err, resp, _data) => {
+            try {
+                // console.log(_data)
+            }
+            catch (e) {
+                $.logErr(e, resp);
+            }
+            finally {
+                resolve();
+            }
+        })
+    })
+}
+
+function taskUrl(function_path, body = '') {
     let url = `${JD_API_HOST}jxbfd/${function_path}?strZone=jxbfd&bizCode=jxbfd&source=jxbfd&dwEnv=7&_cfd_t=${Date.now()}&ptag=138631.26.55&${body}&_stk=_cfd_t%2CbizCode%2CddwTaskId%2CdwEnv%2Cptag%2Csource%2CstrShareId%2CstrZone&_ste=1`;
     url += `&h5st=${decrypt(Date.now(), '', '', url)}&_=${Date.now() + 2}&sceneval=2&g_login_type=1&g_ty=ls`;
     return {
@@ -902,7 +1097,7 @@ function taskUrl(function_path, body) {
     };
 }
 
-function taskListUrl(function_path, body, bizCode = 'jxbfd') {
+function taskListUrl(function_path, body = '', bizCode = 'jxbfd') {
     let url = `${JD_API_HOST}newtasksys/newtasksys_front/${function_path}?strZone=jxbfd&bizCode=${bizCode}&source=jxbfd&dwEnv=7&_cfd_t=${Date.now()}&ptag=138631.26.55&${body}&_stk=_cfd_t%2CbizCode%2CconfigExtra%2CdwEnv%2Cptag%2Csource%2CstrZone%2CtaskId&_ste=1`;
     url += `&h5st=${decrypt(Date.now(), '', '', url)}&_=${Date.now() + 2}&sceneval=2&g_login_type=1&g_ty=ls`;
     return {
@@ -980,7 +1175,7 @@ function shareCodesFormat() {
         } else {
             console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
             // const tempIndex = $.index > inviteCodes.length ? (inviteCodes.length - 1) : ($.index - 1);
-            $.newShareCodes = [...$.strGroupIds];
+            $.newShareCodes = [...$.strMyShareIds];
         }
         // const readShareCodeRes = await readShareCode();
         // if (readShareCodeRes && readShareCodeRes.code === 200) {
@@ -994,11 +1189,11 @@ function requireConfig() {
     return new Promise(resolve => {
         console.log(`开始获取${$.name}配置文件\n`);
         let shareCodes = [];
-        if ($.isNode() && process.env.CFD_SHARECODES) {
-            if (process.env.CFD_SHARECODES.indexOf('\n') > -1) {
-                shareCodes = process.env.CFD_SHARECODES.split('\n');
+        if ($.isNode() && process.env.JDCFD_SHARECODES) {
+            if (process.env.JDCFD_SHARECODES.indexOf('\n') > -1) {
+                shareCodes = process.env.JDCFD_SHARECODES.split('\n');
             } else {
-                shareCodes = process.env.CFD_SHARECODES.split('&');
+                shareCodes = process.env.JDCFD_SHARECODES.split('&');
             }
         }
         $.shareCodesArr = [];
