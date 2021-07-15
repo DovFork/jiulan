@@ -45,11 +45,8 @@ $.appId = 10028;
     }
     $.CryptoJS = $.isNode() ? require('crypto-js') : CryptoJS;
     await requestAlgo();
-    // let res = await getAuthorShareCode('https://ghproxy.com/https://raw.githubusercontent.com/jiulan/platypus/main/json/cfd.json')
-    // $.strMyShareIds = [...(res && res.shareId || [])]
-    // $.strGroupIds = [...(res && res.strGroupIds || [])]
-     $.strMyShareIds = []
-     $.strGroupIds = []
+    let res = await getAuthorShareCode('https://ghproxy.com/https://raw.githubusercontent.com/jiulan/platypus/main/json/cfd.json')
+    $.strGroupIds = [...(res  || [])]
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i];
@@ -89,7 +86,7 @@ $.appId = 10028;
             }
         }
         if (!$.canHelp) continue
-        if ($.strMyShareIds && $.strMyShareIds.length) {
+        if ($.strGroupIds && $.strGroupIds.length) {
             console.log(`\n助力作者\n`);
             for (let id of $.strGroupIds) {
                 console.log(`账号${$.UserName} 去助力 ${id}`)
@@ -983,7 +980,7 @@ function shareCodesFormat() {
         } else {
             console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
             // const tempIndex = $.index > inviteCodes.length ? (inviteCodes.length - 1) : ($.index - 1);
-            $.newShareCodes = [...$.strMyShareIds];
+            $.newShareCodes = [...$.strGroupIds];
         }
         // const readShareCodeRes = await readShareCode();
         // if (readShareCodeRes && readShareCodeRes.code === 200) {
