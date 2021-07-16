@@ -77,9 +77,9 @@ $.appId = 10028;
         cookie = cookiesArr[j];
         $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
         $.canHelp = true
-        if ($.shareCodes && $.shareCodes.length) {
-            console.log(`\n自己账号内部循环互助\n`);
-            for (let id of $.shareCodes) {
+        if ($.strGroupIds && $.strGroupIds.length) {
+            console.log(`\n助力作者\n`);
+            for (let id of $.strGroupIds) {
                 console.log(`账号${$.UserName} 去助力 ${id}`)
                 await helpByStage(id)
                 if (!$.canHelp) break
@@ -87,9 +87,9 @@ $.appId = 10028;
             }
         }
         if (!$.canHelp) continue
-        if ($.strGroupIds && $.strGroupIds.length) {
-            console.log(`\n助力作者\n`);
-            for (let id of $.strGroupIds) {
+        if ($.shareCodes && $.shareCodes.length) {
+            console.log(`\n自己账号内部循环互助\n`);
+            for (let id of $.shareCodes) {
                 console.log(`账号${$.UserName} 去助力 ${id}`)
                 await helpByStage(id)
                 if (!$.canHelp) break
