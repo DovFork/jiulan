@@ -6,17 +6,17 @@
 ============Quantumultx===============
 [task_local]
 #发财大赢家
-1 0,10,20 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcdyj.js, tag=新潮品牌狂欢, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+1 0 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcdyj.js, tag=新潮品牌狂欢, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "1 0,10,20 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcdyj.js tag=翻翻乐
+cron "1 0 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcdyj.js tag=翻翻乐
 
 ===============Surge=================
-发财大赢家 = type=cron,cronexp="1 0,10,20 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcdyj.js
+发财大赢家 = type=cron,cronexp="1 0 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcdyj.js
 
 ============小火箭=========
-发财大赢家 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcdyj.js, cronexpr="1 0,10,20 * * *", timeout=3600, enable=true
+发财大赢家 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcdyj.js, cronexpr="1 0 * * *", timeout=3600, enable=true
 
  */
 const $ = new Env('发财大赢家');
