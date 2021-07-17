@@ -197,13 +197,11 @@ function help(rid, inviter, type, helpother) {
                     data = JSON.parse(data);
                     if (data.data && data.data.helpResult) {
                         console.log(JSON.stringify(data.data.helpResult))
-                        if (!helpother) {
-                            if (data.data.helpResult.code === 16005 || data.data.helpResult.code === 16007) {
-                                $.needhelp = false
-                                $.canDraw = true
-                            } else if (data.data.helpResult.code === 16011) {
-                                $.needhelp = false
-                            }
+                        if (data.data.helpResult.code === 16005 || data.data.helpResult.code === 16007) {
+                            $.needhelp = false
+                            $.canDraw = true
+                        } else if (data.data.helpResult.code === 16011) {
+                            $.needhelp = false
                         }
                     } else {
                         console.log(JSON.stringify(data))
