@@ -25,6 +25,7 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
 const ua = `jdltapp;iPhone;3.1.0;${Math.ceil(Math.random()*4+10)}.${Math.ceil(Math.random()*4)};${randomString(40)}`
 var pins = process.env.earn30Pins ? process.env.earn30Pins : '';
 let cookiesArr = [];
+//默认添加我的 介意删除
 var helps = [{"shareCode":"8E544CDD476CD86C80C209F59E570461","redPacketId":"866618160968126464"}];
 var tools = [];
 !(async () => {
