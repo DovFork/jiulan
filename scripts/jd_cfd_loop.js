@@ -76,80 +76,11 @@ async function cfd() {
         }
         await $.wait(2000)
         await speedUp()
-        await $.wait(2000)
-        await queryshell()
     } catch (e) {
         $.logErr(e)
     }
 }
 
-// 捡贝壳
-async function queryshell() {
-    return new Promise(async (resolve) => {
-        $.get(taskUrl(`story/queryshell`), async (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(`${JSON.stringify(err)}`)
-                    console.log(`${$.name} queryshell API请求失败，请检查网路重试`)
-                } else {
-                    data = JSON.parse(data);
-                    for (let key of Object.keys(data.Data.NormShell)) {
-                        let vo = data.Data.NormShell[key]
-                        for (let j = 0; j < vo.dwNum; j++) {
-                            await pickshell(`dwType=${vo.dwType}`)
-                            await $.wait(2000)
-                        }
-                    }
-                    console.log('')
-                }
-            } catch (e) {
-                $.logErr(e, resp);
-            } finally {
-                resolve();
-            }
-        })
-    })
-}
-
-function pickshell(body) {
-    return new Promise((resolve) => {
-        $.get(taskUrl(`story/pickshell`, body), (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(`${JSON.stringify(err)}`)
-                    console.log(`${$.name} pickshell API请求失败，请检查网路重试`)
-                } else {
-                    data = JSON.parse(data);
-                    let dwName
-                    switch (data.Data.strFirstDesc) {
-                        case '捡到珍珠了，看起来很贵的样子':
-                            dwName = '小珍珠'
-                            break
-                        case '捡到小海螺了，做成项链一定很漂亮':
-                            dwName = '小海螺'
-                            break
-                        case '把我放在耳边，就能听到大海的声音了~':
-                            dwName = '大海螺'
-                            break
-                        case '只要诚心祈祷，愿望就会实现哦~':
-                            dwName = '海星'
-                            break
-                        default:
-                            if (dwName === 'undefined'){
-                                dwName = data.Data.strFirstDesc;
-                            }
-                            break
-                    }
-                    console.log(`捡贝壳：捡到了${dwName}`)
-                }
-            } catch (e) {
-                $.logErr(e, resp);
-            } finally {
-                resolve();
-            }
-        })
-    })
-}
 
 // 热气球接客
 async function speedUp() {
