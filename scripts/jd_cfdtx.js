@@ -75,16 +75,7 @@ let nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 
             $.nickName = '';
             $.isLogin = true;
             message = ''
-            await TotalBean();
             console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
-            if (!$.isLogin) {
-                $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
-
-                if ($.isNode()) {
-                    await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
-                }
-                continue
-            }
             $.info = {}
             token = await getJxToken()
             await cfd();
@@ -109,11 +100,11 @@ async function cfd() {
             }
         }
 
-        const beginInfo = await getUserInfo(false);
-        if (beginInfo.Fund.ddwFundTargTm === 0) {
-            console.log(`还未开通活动，请先开通\n`)
-            return
-        }
+        // const beginInfo = await getUserInfo(false);
+        // if (beginInfo.Fund.ddwFundTargTm === 0) {
+        //     console.log(`还未开通活动，请先开通\n`)
+        //     return
+        // }
 
         await cashOutQuali()
         await userCashOutState()
