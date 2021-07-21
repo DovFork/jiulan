@@ -1,6 +1,6 @@
 /*
 京喜财富岛提现
-cron 0 0 * * * jd_cfdtx.js
+cron 59 23,11 * * * jd_cfdtx.js
 更新时间：2021-7-20
 活动入口：京喜APP-我的-京喜财富岛提现
 
@@ -9,17 +9,17 @@ cron 0 0 * * * jd_cfdtx.js
 ============Quantumultx===============
 [task_local]
 #京喜财富岛提现
-0 0,12 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js, tag=京喜财富岛提现, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
+59 23,11 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js, tag=京喜财富岛提现, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "0 0,12 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js,tag=京喜财富岛提现
+cron "59 23,11 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js,tag=京喜财富岛提现
 
 ===============Surge=================
-京喜财富岛提现 = type=cron,cronexp="0 0,12 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js
+京喜财富岛提现 = type=cron,cronexp="59 23,11 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js
 
 ============小火箭=========
-京喜财富岛提现 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js, cronexpr="0 0,12 * * *", timeout=3600, enable=true
+京喜财富岛提现 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js, cronexpr="59 23,11 * * *", timeout=3600, enable=true
  */
 const $ = new Env("京喜财富岛提现");
 
@@ -100,11 +100,11 @@ async function cfd() {
             }
         }
 
-        // const beginInfo = await getUserInfo(false);
-        // if (beginInfo.Fund.ddwFundTargTm === 0) {
-        //     console.log(`还未开通活动，请先开通\n`)
-        //     return
-        // }
+        const beginInfo = await getUserInfo(false);
+        if (beginInfo.Fund.ddwFundTargTm === 0) {
+            console.log(`还未开通活动，请先开通\n`)
+            return
+        }
 
         await cashOutQuali()
         await userCashOutState()
