@@ -50,15 +50,15 @@ $.appId = 10028;
                 console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
                 if (!$.isLogin) {
                     $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
-
-                    if ($.isNode()) {
-                        await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
-                    }
+                    //
+                    // if ($.isNode()) {
+                    //     await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
+                    // }
                     continue
                 }
                 $.info = {}
                 await cfd();
-                let time = getRndInteger(2000, 5000)
+                let time = getRndInteger(500, 1000)
                 await $.wait(time)
             }
         }
@@ -74,8 +74,11 @@ async function cfd() {
             console.log(`还未开通活动，请先开通\n`)
             return
         }
-        await $.wait(2000)
-        await speedUp()
+        //老板加钱说一次放十个
+        for (let i = 0; i < 10; i++) {
+            await $.wait(500)
+            await speedUp()
+        }
     } catch (e) {
         $.logErr(e)
     }
