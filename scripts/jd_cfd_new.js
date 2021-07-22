@@ -4,6 +4,8 @@
 活动时间：长期
 更新时间：2021-07-13 12:00
 脚本兼容: QuantumultX, Surge,Loon, JSBox, Node.js
+#是否建筑升级
+export JD_CFD_LVL_UP="false"
 =================================Quantumultx=========================
 [task_local]
 #京喜财富岛
@@ -20,6 +22,7 @@ const $ = new Env('财富大陆');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 $.CryptoJS = $.isNode() ? require('crypto-js') : CryptoJS;
 $.appId = 10032;
+$.BuildLvlUp = true;
 const UA = `jdpingou;iPhone;4.11.0;${Math.ceil(Math.random()*2+12)}.${Math.ceil(Math.random()*4)};${randomString(40)};`
 function randomString(e) {
     e = e || 32;
@@ -36,6 +39,9 @@ if ($.isNode()) {
         cookiesArr.push(jdCookieNode[item])
     })
     if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => { };
+    if (process.env.JD_CFD_LVL_UP && process.env.JD_CFD_LVL_UP === 'false'){
+        $.BuildLvlUp = false;
+    }
 } else {
     cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
@@ -119,7 +125,9 @@ async function run() {
         // 故事会
         await StoryInfo()
         // 建筑升级
-        await buildList()
+        if($.BuildLvlUp){
+            await buildList()
+        }
         // 签到 邀请奖励
         await sign()
         // 捡垃圾
