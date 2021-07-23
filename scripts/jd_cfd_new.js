@@ -18,7 +18,7 @@ cron "10 3-20/1 * * *" script-path=https://raw.githubusercontent.com/jiulan/plat
 ====================================小火箭=============================
 京喜财富岛 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_new.js, cronexpr="10 3-20/1 * * *", timeout=3600, enable=true
  */
-const $ = new Env('财富大陆');
+const $ = new Env('京喜财富岛');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 $.CryptoJS = $.isNode() ? require('crypto-js') : CryptoJS;
 $.appId = 10032;
@@ -125,9 +125,7 @@ async function run() {
         // 故事会
         await StoryInfo()
         // 建筑升级
-        if($.BuildLvlUp){
-            await buildList()
-        }
+        await buildList()
         // 签到 邀请奖励
         await sign()
         // 捡垃圾
@@ -273,7 +271,7 @@ async function buildList(){
                 if(GetBuildInfo) msg += ` 升级->需要金币:${GetBuildInfo.ddwNextLvlCostCoin} 获得财富:${GetBuildInfo.ddwLvlRich}`
                 console.log(msg)
                 await $.wait(1000)
-                if(GetBuildInfo.dwCanLvlUp > 0){
+                if(GetBuildInfo.dwCanLvlUp > 0 && $.BuildLvlUp){
                     console.log(`${item.dwLvl == 0 && '开启' || '升级'}${title}`)
                     if(item.dwLvl == 0){
                         await taskGet(`user/createbuilding`, stk, additional)
