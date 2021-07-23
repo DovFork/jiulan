@@ -1,6 +1,6 @@
 /*
 京喜财富岛提现
-cron 59 23,11 * * * jd_cfdtx.js
+cron 0 0 * * * jd_cfdtx.js
 更新时间：2021-7-20
 活动入口：京喜APP-我的-京喜财富岛提现
 
@@ -9,17 +9,17 @@ cron 59 23,11 * * * jd_cfdtx.js
 ============Quantumultx===============
 [task_local]
 #京喜财富岛提现
-59 23,11 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js, tag=京喜财富岛提现, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
+0 0 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js, tag=京喜财富岛提现, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "59 23,11 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js,tag=京喜财富岛提现
+cron "0 0 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js,tag=京喜财富岛提现
 
 ===============Surge=================
-京喜财富岛提现 = type=cron,cronexp="59 23,11 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js
+京喜财富岛提现 = type=cron,cronexp="0 0 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js
 
 ============小火箭=========
-京喜财富岛提现 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js, cronexpr="59 23,11 * * *", timeout=3600, enable=true
+京喜财富岛提现 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js, cronexpr="0 0 * * *", timeout=3600, enable=true
  */
 const $ = new Env("京喜财富岛提现");
 
@@ -34,7 +34,14 @@ $.shareCodes = [];
 let cookiesArr = [], cookie = '', token;
 let allMessage = '', message = ''
 $.money = 0
-
+let UA = `jdapp;iPhone;10.0.5;${Math.ceil(Math.random()*2+12)}.${Math.ceil(Math.random()*4)};${randomString(40)};`
+function randomString(e) {
+    e = e || 32;
+    let t = "abcdefhijkmnprstwxyz2345678", a = t.length, n = "";
+    for (i = 0; i < e; i++)
+        n += t.charAt(Math.floor(Math.random() * a));
+    return n
+}
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
@@ -100,7 +107,7 @@ async function cfd() {
             }
         }
 
-        const beginInfo = await getUserInfo(false);
+        const beginInfo = await getHomePageInfo();
         if (beginInfo.Fund.ddwFundTargTm === 0) {
             console.log(`还未开通活动，请先开通\n`)
             return
@@ -322,9 +329,14 @@ function buildLvlUp(body) {
 }
 
 // 获取用户信息
-function getUserInfo(showInvite = true) {
+async function getHomePageInfo() {
+    let additional= `&ddwTaskId&strShareId&strMarkList=guider_step%2Ccollect_coin_auth%2Cguider_medal%2Cguider_over_flag%2Cbuild_food_full%2Cbuild_sea_full%2Cbuild_shop_full%2Cbuild_fun_full%2Cmedal_guider_show%2Cguide_guider_show%2Cguide_receive_vistor`
+    let stk= `_cfd_t,bizCode,ddwTaskId,dwEnv,ptag,source,strMarkList,strShareId,strZone`
+    $.HomeInfo = await taskGet(`user/QueryUserInfo`, stk, additional)
+    let type = `user/QueryUserInfo`;
     return new Promise(async (resolve) => {
-        $.get(taskUrl(`user/QueryUserInfo`), (err, resp, data) => {
+        let myRequest = getGetRequest(type, stk, additional)
+        $.get(myRequest, async (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -341,15 +353,7 @@ function getUserInfo(showInvite = true) {
                         Fund = {},
                         StoryInfo = {}
                     } = data;
-                    if (showInvite) {
-                        console.log(`\n获取用户信息：${sErrMsg}\n${$.showLog ? data : ""}`);
-                        console.log(`\n当前等级:${dwLandLvl},金币:${ddwCoinBalance},财富值:${ddwRichBalance}\n`)
-                    }
-                    if (showInvite && strMyShareId) {
-                        console.log(`财富岛好友互助码每次运行都变化,旧的可继续使用`);
-                        console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${strMyShareId}\n\n`);
-                        $.shareCodes.push(strMyShareId)
-                    }
+
                     $.info = {
                         ...$.info,
                         buildInfo,
@@ -377,6 +381,77 @@ function getUserInfo(showInvite = true) {
         });
     });
 }
+
+function taskGet(type, stk, additional){
+
+}
+function getGetRequest(type, stk='', additional='') {
+    let url = ``;
+    if(type == 'user/ComposeGameState'){
+        url = `https://m.jingxi.com/jxbfd/${type}?__t=${Date.now()}&strZone=jxbfd&dwFirst=1&_=${Date.now()}&sceneval=2`
+    }else if(type == 'user/RealTmReport'){
+        url = `https://m.jingxi.com/jxbfd/${type}?__t=${Date.now()}${additional}&_=${Date.now()}&sceneval=2`
+    }else{
+        let stks = ''
+        if(stk) stks = `&_stk=${stk}`
+        if(type == 'GetUserTaskStatusList' || type == 'Award' || type == 'Award1' || type == 'DoTask'){
+            let bizCode = 'jxbfd'
+            if(type == 'Award1'){
+                bizCode = 'jxbfddch'
+                type = 'Award'
+            }
+            url = `https://m.jingxi.com/newtasksys/newtasksys_front/${type}?strZone=jxbfd&bizCode=${bizCode}&source=jxbfd&dwEnv=3&_cfd_t=${Date.now()}${additional}${stks}&_ste=1&_=${Date.now()}&sceneval=2&g_login_type=1`
+        }else if(type == 'user/ComposeGameAddProcess' || type == 'user/ComposeGameAward'){
+            url = `https://m.jingxi.com/jxbfd/${type}?strZone=jxbfd&__t=${Date.now()}${additional}${stks}&_=${Date.now()}&sceneval=2`;
+        }else{
+            url = `https://m.jingxi.com/jxbfd/${type}?strZone=jxbfd&bizCode=jxbfd&source=jxbfd&dwEnv=7&_cfd_t=${Date.now()}&ptag=${additional}${stks}&_=${Date.now()}&sceneval=2`;
+        }
+        url += `&h5st=${decrypt(Date.now(), stk, '', url)}`;
+    }
+    return {
+        url,
+        headers: {
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+            "Connection": "keep-alive",
+            'Cookie': cookie,
+            'Host': 'm.jingxi.com',
+            "Referer": "https://st.jingxi.com/",
+            "User-Agent": UA,
+
+        }
+    }
+}
+function biz(contents){
+    return new Promise(async (resolve) => {
+        let myRequest = {
+            url:`https://m.jingxi.com/webmonitor/collect/biz.json?contents=${contents}&t=${Math.random()}&sceneval=2`,
+            headers: {
+                "Accept": "*/*",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+                "Connection": "keep-alive",
+                'Cookie': cookie,
+                'Host': 'm.jingxi.com',
+                "Referer": "https://st.jingxi.com/",
+                "User-Agent": UA,
+            }
+        }
+        $.get(myRequest, async (err, resp, _data) => {
+            try {
+                // console.log(_data)
+            }
+            catch (e) {
+                $.logErr(e, resp);
+            }
+            finally {
+                resolve();
+            }
+        });
+    });
+}
+
 
 function sleep(timeout) {
     return new Promise((resolve) => setTimeout(resolve, timeout));
