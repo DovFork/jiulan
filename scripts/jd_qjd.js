@@ -89,7 +89,7 @@ const JD_API_HOST = 'https://car-member.jd.com/api/';
                     continue
                 }
                 //抽取一名幸运娃儿助力
-                if (helpAuthorFlag && helpAuthorInfo.length !==0){
+                if (helpAuthorFlag && helpAuthorInfo.length > 0){
                     let authorList = getRandomArrayElements(helpAuthorInfo,1);
                     let author = authorList[0];
                     console.log(`${$.UserName}给作者助力一次`)
