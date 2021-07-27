@@ -74,11 +74,14 @@ const JD_API_HOST = 'https://car-member.jd.com/api/';
             }
             await $.wait(2000)
             await jdCar();
+            $.helpStatus = true;
             for (let j = 0; j < helpInfo.length; j++) {
                 let helpItem = helpInfo[j];
                 $.groupCode = helpItem.groupCode
                 $.shareCode = helpItem.shareCode
                 $.activityId = helpItem.activityId
+
+
                 if ($.UserName === helpItem.userName) {
                     continue
                 }
