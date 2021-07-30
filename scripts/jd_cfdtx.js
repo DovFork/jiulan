@@ -21,6 +21,30 @@ cron "0 0 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_
 ============小火箭=========
 京喜财富岛提现 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js, cronexpr="0 0 * * *", timeout=3600, enable=true
  */
+/*
+京喜财富岛提现
+cron 59 11,12,23 * * * jd_cfdtx.js
+更新时间：2021-7-20
+活动入口：京喜APP-我的-京喜财富岛提现
+
+已支持IOS双京东账号,Node.js支持N个京东账号
+脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
+============Quantumultx===============
+[task_local]
+#京喜财富岛提现
+59 11,12,23 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js, tag=京喜财富岛提现, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
+
+================Loon==============
+[Script]
+cron "59 11,12,23 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js,tag=京喜财富岛提现
+
+===============Surge=================
+京喜财富岛提现 = type=cron,cronexp="59 11,12,23 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js
+
+============小火箭=========
+京喜财富岛提现 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js, cronexpr="59 11,12,23 * * *", timeout=3600, enable=true
+ */
+
 const $ = new Env("京喜财富岛提现");
 
 !function(n){"use strict";function r(n,r){var t=(65535&n)+(65535&r);return(n>>16)+(r>>16)+(t>>16)<<16|65535&t}function t(n,r){return n<<r|n>>>32-r}function u(n,u,e,o,c,f){return r(t(r(r(u,n),r(o,f)),c),e)}function e(n,r,t,e,o,c,f){return u(r&t|~r&e,n,r,o,c,f)}function o(n,r,t,e,o,c,f){return u(r&e|t&~e,n,r,o,c,f)}function c(n,r,t,e,o,c,f){return u(r^t^e,n,r,o,c,f)}function f(n,r,t,e,o,c,f){return u(t^(r|~e),n,r,o,c,f)}function i(n,t){n[t>>5]|=128<<t%32,n[14+(t+64>>>9<<4)]=t;var u,i,a,h,g,l=1732584193,d=-271733879,v=-1732584194,C=271733878;for(u=0;u<n.length;u+=16)i=l,a=d,h=v,g=C,d=f(d=f(d=f(d=f(d=c(d=c(d=c(d=c(d=o(d=o(d=o(d=o(d=e(d=e(d=e(d=e(d,v=e(v,C=e(C,l=e(l,d,v,C,n[u],7,-680876936),d,v,n[u+1],12,-389564586),l,d,n[u+2],17,606105819),C,l,n[u+3],22,-1044525330),v=e(v,C=e(C,l=e(l,d,v,C,n[u+4],7,-176418897),d,v,n[u+5],12,1200080426),l,d,n[u+6],17,-1473231341),C,l,n[u+7],22,-45705983),v=e(v,C=e(C,l=e(l,d,v,C,n[u+8],7,1770035416),d,v,n[u+9],12,-1958414417),l,d,n[u+10],17,-42063),C,l,n[u+11],22,-1990404162),v=e(v,C=e(C,l=e(l,d,v,C,n[u+12],7,1804603682),d,v,n[u+13],12,-40341101),l,d,n[u+14],17,-1502002290),C,l,n[u+15],22,1236535329),v=o(v,C=o(C,l=o(l,d,v,C,n[u+1],5,-165796510),d,v,n[u+6],9,-1069501632),l,d,n[u+11],14,643717713),C,l,n[u],20,-373897302),v=o(v,C=o(C,l=o(l,d,v,C,n[u+5],5,-701558691),d,v,n[u+10],9,38016083),l,d,n[u+15],14,-660478335),C,l,n[u+4],20,-405537848),v=o(v,C=o(C,l=o(l,d,v,C,n[u+9],5,568446438),d,v,n[u+14],9,-1019803690),l,d,n[u+3],14,-187363961),C,l,n[u+8],20,1163531501),v=o(v,C=o(C,l=o(l,d,v,C,n[u+13],5,-1444681467),d,v,n[u+2],9,-51403784),l,d,n[u+7],14,1735328473),C,l,n[u+12],20,-1926607734),v=c(v,C=c(C,l=c(l,d,v,C,n[u+5],4,-378558),d,v,n[u+8],11,-2022574463),l,d,n[u+11],16,1839030562),C,l,n[u+14],23,-35309556),v=c(v,C=c(C,l=c(l,d,v,C,n[u+1],4,-1530992060),d,v,n[u+4],11,1272893353),l,d,n[u+7],16,-155497632),C,l,n[u+10],23,-1094730640),v=c(v,C=c(C,l=c(l,d,v,C,n[u+13],4,681279174),d,v,n[u],11,-358537222),l,d,n[u+3],16,-722521979),C,l,n[u+6],23,76029189),v=c(v,C=c(C,l=c(l,d,v,C,n[u+9],4,-640364487),d,v,n[u+12],11,-421815835),l,d,n[u+15],16,530742520),C,l,n[u+2],23,-995338651),v=f(v,C=f(C,l=f(l,d,v,C,n[u],6,-198630844),d,v,n[u+7],10,1126891415),l,d,n[u+14],15,-1416354905),C,l,n[u+5],21,-57434055),v=f(v,C=f(C,l=f(l,d,v,C,n[u+12],6,1700485571),d,v,n[u+3],10,-1894986606),l,d,n[u+10],15,-1051523),C,l,n[u+1],21,-2054922799),v=f(v,C=f(C,l=f(l,d,v,C,n[u+8],6,1873313359),d,v,n[u+15],10,-30611744),l,d,n[u+6],15,-1560198380),C,l,n[u+13],21,1309151649),v=f(v,C=f(C,l=f(l,d,v,C,n[u+4],6,-145523070),d,v,n[u+11],10,-1120210379),l,d,n[u+2],15,718787259),C,l,n[u+9],21,-343485551),l=r(l,i),d=r(d,a),v=r(v,h),C=r(C,g);return[l,d,v,C]}function a(n){var r,t="",u=32*n.length;for(r=0;r<u;r+=8)t+=String.fromCharCode(n[r>>5]>>>r%32&255);return t}function h(n){var r,t=[];for(t[(n.length>>2)-1]=void 0,r=0;r<t.length;r+=1)t[r]=0;var u=8*n.length;for(r=0;r<u;r+=8)t[r>>5]|=(255&n.charCodeAt(r/8))<<r%32;return t}function g(n){return a(i(h(n),8*n.length))}function l(n,r){var t,u,e=h(n),o=[],c=[];for(o[15]=c[15]=void 0,e.length>16&&(e=i(e,8*n.length)),t=0;t<16;t+=1)o[t]=909522486^e[t],c[t]=1549556828^e[t];return u=i(o.concat(h(r)),512+8*r.length),a(i(c.concat(u),640))}function d(n){var r,t,u="";for(t=0;t<n.length;t+=1)r=n.charCodeAt(t),u+="0123456789abcdef".charAt(r>>>4&15)+"0123456789abcdef".charAt(15&r);return u}function v(n){return unescape(encodeURIComponent(n))}function C(n){return g(v(n))}function A(n){return d(C(n))}function m(n,r){return l(v(n),v(r))}function s(n,r){return d(m(n,r))}function b(n,r,t){return r?t?m(r,n):s(r,n):t?C(n):A(n)}$.md5=b}();
@@ -31,17 +55,9 @@ $.showLog = $.getdata("cfd_showLog") ? $.getdata("cfd_showLog") === "true" : fal
 $.notifyTime = $.getdata("cfd_notifyTime");
 $.result = [];
 $.shareCodes = [];
-let cookiesArr = [], cookie = '', token;
+let cookiesArr = [], cookie = '', token, nowTimes;
 let allMessage = '', message = ''
-$.money = 0
-let UA = `jdapp;iPhone;10.0.5;${Math.ceil(Math.random()*2+12)}.${Math.ceil(Math.random()*4)};${randomString(40)};`
-function randomString(e) {
-    e = e || 32;
-    let t = "abcdefhijkmnprstwxyz2345678", a = t.length, n = "";
-    for (i = 0; i < e; i++)
-        n += t.charAt(Math.floor(Math.random() * a));
-    return n
-}
+
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
@@ -52,7 +68,7 @@ if ($.isNode()) {
     cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 $.appId = 10028;
-Date.prototype.Format = function (fmt) { //author: meizz
+Date.prototype.Format = function (fmt) {
     var o = {
         "M+": this.getMonth() + 1, //月份
         "d+": this.getDate(), //日
@@ -66,7 +82,6 @@ Date.prototype.Format = function (fmt) { //author: meizz
         if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return fmt;
 }
-let nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60 * 1000 + 8 * 60 * 60 * 1000)
 !(async () => {
     if (!cookiesArr[0]) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
@@ -82,8 +97,19 @@ let nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 
             $.nickName = '';
             $.isLogin = true;
             message = ''
+            await TotalBean();
             console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
+            if (!$.isLogin) {
+                $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
+
+                if ($.isNode()) {
+                    await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
+                }
+                continue
+            }
+            $.num = i
             $.info = {}
+            $.money = 0
             token = await getJxToken()
             await cfd();
         }
@@ -97,9 +123,10 @@ let nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 
 
 async function cfd() {
     try {
-        if (nowTimes.getHours() === 23 && nowTimes.getMinutes() === 59) {
-            let nowtime = new Date().Format("ss")
-            let starttime = process.env.CFD_STARTTIME ? process.env.CFD_STARTTIME : 60;
+        nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60 * 1000 + 8 * 60 * 60 * 1000)
+        if ((nowTimes.getHours() === 11 || nowTimes.getHours() === 23) && nowTimes.getMinutes() === 59) {
+            let nowtime = new Date().Format("s")
+            let starttime = $.isNode() ? (process.env.CFD_STARTTIME ? process.env.CFD_STARTTIME * 1 : 59.9) : ($.getdata('CFD_STARTTIME') ? $.getdata('CFD_STARTTIME') * 1 : 59.9);
             if(nowtime < 59) {
                 let sleeptime = (starttime - nowtime) * 1000;
                 console.log(`等待时间 ${sleeptime / 1000}\n`);
@@ -107,13 +134,21 @@ async function cfd() {
             }
         }
 
-        const beginInfo = await getHomePageInfo();
+        if ($.num % 2 !== 0) {
+            console.log(`等待`)
+            await $.wait(2000)
+        }
+
+        const beginInfo = await getUserInfo(false);
         if (beginInfo.Fund.ddwFundTargTm === 0) {
             console.log(`还未开通活动，请先开通\n`)
             return
         }
 
+        console.log(`获取提现资格`)
         await cashOutQuali()
+        console.log(`提现`)
+        console.log(`提现金额：按库存轮询提现，0点场提1元以上，12点场提0.5元以上，12点后不做限制\n`)
         await userCashOutState()
 
         await showMsg()
@@ -199,16 +234,25 @@ async function userCashOutState(type = true) {
                     if (type) {
                         if (data.dwTodayIsCashOut !== 1) {
                             if (data.ddwUsrTodayGetRich >= data.ddwTodayTargetUnLockRich) {
+                                nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60 * 1000 + 8 * 60 * 60 * 1000)
+                                if (nowTimes.getHours() >= 0 && nowTimes.getHours() < 12) {
+                                    data.UsrCurrCashList = data.UsrCurrCashList.filter((x) => x.ddwMoney / 100 >= 1)
+                                } else if (nowTimes.getHours() === 12 && nowTimes.getMinutes() <= 5) {
+                                    data.UsrCurrCashList = data.UsrCurrCashList.filter((x) => x.ddwMoney / 100 >= 0.5)
+                                }
                                 for (let key of Object.keys(data.UsrCurrCashList).reverse()) {
                                     let vo = data.UsrCurrCashList[key]
-                                    if (vo.dwDefault === 1) {
+                                    if (vo.dwRemain > 0) {
                                         let cashOutRes = await cashOut(vo.ddwMoney, vo.ddwPaperMoney)
                                         if (cashOutRes.iRet === 0) {
                                             $.money = vo.ddwMoney / 100
-                                            console.log(`提现成功获得：${$.money}元`)
+                                            console.log(`提现成功：获得${$.money}元`)
+                                            break
                                         } else {
                                             await userCashOutState()
                                         }
+                                    } else {
+                                        console.log(`提现失败：${vo.ddwMoney / 100}元库存不足`)
                                     }
                                 }
                             } else {
@@ -235,14 +279,14 @@ async function userCashOutState(type = true) {
                                             break
                                     }
                                     console.log(`升级建筑`)
-                                    console.log(`【${buildNmae}】当前等级：${vo.dwLvl} 升级获得财富：${getBuildInfoRes.ddwLvlRich}`)
-                                    console.log(`【${buildNmae}】升级需要${getBuildInfoRes.ddwNextLvlCostCoin}金币，当前拥有${$.info.ddwCoinBalance}`)
+                                    console.log(`【${buildNmae}】当前等级：${vo.dwLvl}`)
+                                    console.log(`【${buildNmae}】升级需要${getBuildInfoRes.ddwNextLvlCostCoin}金币，当前拥有${$.info.ddwCoinBalance}金币`)
                                     if(getBuildInfoRes.dwCanLvlUp > 0 && $.info.ddwCoinBalance >= getBuildInfoRes.ddwNextLvlCostCoin) {
                                         console.log(`【${buildNmae}】满足升级条件，开始升级`)
                                         const body = `ddwCostCoin=${getBuildInfoRes.ddwNextLvlCostCoin}&strBuildIndex=${getBuildInfoRes.strBuildIndex}`
                                         let buildLvlUpRes = await buildLvlUp(body)
                                         if (buildLvlUpRes.iRet === 0) {
-                                            console.log(`【${buildNmae}】升级成功\n`)
+                                            console.log(`【${buildNmae}】升级成功：获得${getBuildInfoRes.ddwLvlRich}财富\n`)
                                             break
                                         } else {
                                             console.log(`【${buildNmae}】升级失败：${buildLvlUpRes.sErrMsg}\n`)
@@ -259,7 +303,7 @@ async function userCashOutState(type = true) {
                                 }
                             }
                         } else {
-                            console.log(`今天已经提现过了~`)
+                            console.log(`提现失败：今天已经提现过了~`)
                         }
                     }
                 }
@@ -329,14 +373,9 @@ function buildLvlUp(body) {
 }
 
 // 获取用户信息
-async function getHomePageInfo() {
-    let additional= `&ddwTaskId&strShareId&strMarkList=guider_step%2Ccollect_coin_auth%2Cguider_medal%2Cguider_over_flag%2Cbuild_food_full%2Cbuild_sea_full%2Cbuild_shop_full%2Cbuild_fun_full%2Cmedal_guider_show%2Cguide_guider_show%2Cguide_receive_vistor`
-    let stk= `_cfd_t,bizCode,ddwTaskId,dwEnv,ptag,source,strMarkList,strShareId,strZone`
-    $.HomeInfo = await taskGet(`user/QueryUserInfo`, stk, additional)
-    let type = `user/QueryUserInfo`;
+function getUserInfo(showInvite = true) {
     return new Promise(async (resolve) => {
-        let myRequest = getGetRequest(type, stk, additional)
-        $.get(myRequest, async (err, resp, data) => {
+        $.get(taskUrl(`user/QueryUserInfo`, `strPgUUNum=${token['farm_jstoken']}&strPgtimestamp=${token['timestamp']}&strPhoneID=${token['phoneid']}`), (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -353,7 +392,15 @@ async function getHomePageInfo() {
                         Fund = {},
                         StoryInfo = {}
                     } = data;
-
+                    if (showInvite) {
+                        console.log(`\n获取用户信息：${sErrMsg}\n${$.showLog ? data : ""}`);
+                        console.log(`\n当前等级:${dwLandLvl},金币:${ddwCoinBalance},财富值:${ddwRichBalance}\n`)
+                    }
+                    if (showInvite && strMyShareId) {
+                        console.log(`财富岛好友互助码每次运行都变化,旧的可继续使用`);
+                        console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${strMyShareId}\n\n`);
+                        $.shareCodes.push(strMyShareId)
+                    }
                     $.info = {
                         ...$.info,
                         buildInfo,
@@ -382,77 +429,6 @@ async function getHomePageInfo() {
     });
 }
 
-function taskGet(type, stk, additional){
-
-}
-function getGetRequest(type, stk='', additional='') {
-    let url = ``;
-    if(type == 'user/ComposeGameState'){
-        url = `https://m.jingxi.com/jxbfd/${type}?__t=${Date.now()}&strZone=jxbfd&dwFirst=1&_=${Date.now()}&sceneval=2`
-    }else if(type == 'user/RealTmReport'){
-        url = `https://m.jingxi.com/jxbfd/${type}?__t=${Date.now()}${additional}&_=${Date.now()}&sceneval=2`
-    }else{
-        let stks = ''
-        if(stk) stks = `&_stk=${stk}`
-        if(type == 'GetUserTaskStatusList' || type == 'Award' || type == 'Award1' || type == 'DoTask'){
-            let bizCode = 'jxbfd'
-            if(type == 'Award1'){
-                bizCode = 'jxbfddch'
-                type = 'Award'
-            }
-            url = `https://m.jingxi.com/newtasksys/newtasksys_front/${type}?strZone=jxbfd&bizCode=${bizCode}&source=jxbfd&dwEnv=3&_cfd_t=${Date.now()}${additional}${stks}&_ste=1&_=${Date.now()}&sceneval=2&g_login_type=1`
-        }else if(type == 'user/ComposeGameAddProcess' || type == 'user/ComposeGameAward'){
-            url = `https://m.jingxi.com/jxbfd/${type}?strZone=jxbfd&__t=${Date.now()}${additional}${stks}&_=${Date.now()}&sceneval=2`;
-        }else{
-            url = `https://m.jingxi.com/jxbfd/${type}?strZone=jxbfd&bizCode=jxbfd&source=jxbfd&dwEnv=7&_cfd_t=${Date.now()}&ptag=${additional}${stks}&_=${Date.now()}&sceneval=2`;
-        }
-        url += `&h5st=${decrypt(Date.now(), stk, '', url)}`;
-    }
-    return {
-        url,
-        headers: {
-            "Accept": "*/*",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-            "Connection": "keep-alive",
-            'Cookie': cookie,
-            'Host': 'm.jingxi.com',
-            "Referer": "https://st.jingxi.com/",
-            "User-Agent": UA,
-
-        }
-    }
-}
-function biz(contents){
-    return new Promise(async (resolve) => {
-        let myRequest = {
-            url:`https://m.jingxi.com/webmonitor/collect/biz.json?contents=${contents}&t=${Math.random()}&sceneval=2`,
-            headers: {
-                "Accept": "*/*",
-                "Accept-Encoding": "gzip, deflate, br",
-                "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-                "Connection": "keep-alive",
-                'Cookie': cookie,
-                'Host': 'm.jingxi.com',
-                "Referer": "https://st.jingxi.com/",
-                "User-Agent": UA,
-            }
-        }
-        $.get(myRequest, async (err, resp, _data) => {
-            try {
-                // console.log(_data)
-            }
-            catch (e) {
-                $.logErr(e, resp);
-            }
-            finally {
-                resolve();
-            }
-        });
-    });
-}
-
-
 function sleep(timeout) {
     return new Promise((resolve) => setTimeout(resolve, timeout));
 }
@@ -478,7 +454,11 @@ function taskUrl(function_path, body = '') {
 
 function showMsg() {
     return new Promise(resolve => {
-        message += `提现成功：获得${$.money}元`
+        if ($.money > 0) {
+            message += `提现成功：获得${$.money}元`
+        } else {
+            message += `提现失败：获得空气`
+        }
         if($.money > 0) {
             allMessage += `【京东账号${$.index}】${$.nickName || $.UserName}\n${message}${$.index !== cookiesArr.length ? '\n\n' : '\n\n'}`;
         }
