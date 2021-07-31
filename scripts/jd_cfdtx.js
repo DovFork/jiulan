@@ -102,6 +102,7 @@ Date.prototype.Format = function (fmt) {
             $.num = i
             $.info = {}
             $.money = 0
+            $.quali = false
             token = await getJxToken()
             await cfd();
         }
@@ -126,11 +127,6 @@ async function cfd() {
             }
         }
 
-        if ($.num % 2 !== 0) {
-            console.log(`等待`)
-            await $.wait(2000)
-        }
-
         const beginInfo = await getUserInfo(false);
         if (beginInfo.Fund.ddwFundTargTm === 0) {
             console.log(`还未开通活动，请先开通\n`)
@@ -139,6 +135,10 @@ async function cfd() {
 
         console.log(`获取提现资格`)
         await cashOutQuali()
+        if ($.quali){
+            console.log(`提现资格 not found..\n`)
+            return
+        }
         console.log(`提现`)
         console.log(`提现金额：按库存轮询提现，0点场提1元以上，12点场提0.5元以上，12点后不做限制\n`)
         await userCashOutState()
@@ -201,6 +201,7 @@ function cashOutQuali() {
                 } else {
                     data = JSON.parse(data);
                     if (data.iRet === 0) {
+                        $.quali = true
                         console.log(`获取提现资格成功\n`)
                     } else {
                         console.log(`获取提现资格失败：${data.sErrMsg}\n`)
