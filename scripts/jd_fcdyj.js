@@ -220,8 +220,7 @@ function help(rid, inviter, type, helpother) {
                         } else if (data.data.helpResult.code === 16011) {
                             $.needhelp = false
                         }else if (data.data.helpResult.code === 0){
-                            $.needhelp = false
-                            console.log("助力成功! 助力金额:" + data.data.helpResult.amount)
+                            console.log("助力成功! 助力金额:" + data.data.helpResult.data.amount)
                         }
                     } else {
                       console.log(JSON.stringify(data))
@@ -317,7 +316,7 @@ function getRandomArrayElements(arr, count) {
 
 function taskUrl(function_id, body) {
     return {
-        url: `${JD_API_HOST}/?functionId=${function_id}&body=${encodeURIComponent(body)}&t=${Date.now()}&appid=activities_platform&clientVersion=3.5.2`,
+        url: `${JD_API_HOST}/?functionId=${function_id}&body=${encodeURIComponent(body)}&t=${Date.now()}&appid=activities_platform&clientVersion=3.6.0`,
         headers: {
             "Accept": "*/*",
             "Accept-Encoding": "gzip, deflate, br",
@@ -325,7 +324,7 @@ function taskUrl(function_id, body) {
             "Connection": "keep-alive",
             "Content-Type": "application/x-www-form-urlencoded",
             "Host": "api.m.jd.com",
-            "Referer": "https://618redpacket.jd.com/?activityId=DA4SkG7NXupA9sksI00L0g&channel=wjicon&sid=0a1ec8fa2455796af69028f8410996aw&un_area=1_2803_2829_0",
+            "Referer": "https://618redpacket.jd.com/?activityId=yMVR-_QKRd2Mq27xguJG-w&lng=104.052502&lat=20.96&sid=234e6f8f0c477115ea4c9b9d6a2bc2w&un_area=2_130",
             "Cookie": cookie,
             "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
         }
