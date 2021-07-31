@@ -135,7 +135,7 @@ async function cfd() {
 
         console.log(`获取提现资格`)
         await cashOutQuali()
-        if ($.quali){
+        if (!$.quali){
             console.log(`提现资格 not found..\n`)
             return
         }
@@ -203,6 +203,9 @@ function cashOutQuali() {
                     if (data.iRet === 0) {
                         $.quali = true
                         console.log(`获取提现资格成功\n`)
+                    } else if (data.iRet === 2034){
+                        $.quali = true
+                        console.log(`已获取提现资格\n`)
                     } else {
                         console.log(`获取提现资格失败：${data.sErrMsg}\n`)
                     }
@@ -235,7 +238,7 @@ async function userCashOutState(type = true) {
                                 }
                                 for (let key of Object.keys(data.UsrCurrCashList).reverse()) {
                                     let vo = data.UsrCurrCashList[key]
-                                    if (vo.dwRemain > 0) {
+                                    if (vo.dwDefault === 1) {
                                         let cashOutRes = await cashOut(vo.ddwMoney, vo.ddwPaperMoney)
                                         if (cashOutRes.iRet === 0) {
                                             $.money = vo.ddwMoney / 100
