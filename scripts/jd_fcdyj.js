@@ -61,7 +61,7 @@ const JD_API_HOST = `https://api.m.jd.com`;
 
     if (helpAuthorFlag) {
         try {
-            helpAuthorInfo = await getAuthorShareCode('https://ghproxy.com/https://raw.githubusercontent.com/jiulan/platypus/main/json/dyj.json');
+            helpAuthorInfo = await getAuthorShareCode('https://ghproxy.com/https://raw.githubusercontent.com/jiulan/helpRepository/main/json/dyj.json');
         } catch (e) {
         }
         if (!helpAuthorInfo) {

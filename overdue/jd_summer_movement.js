@@ -138,7 +138,7 @@ if ($.isNode()) {
   let res = [];
   if(helpAuthorFlag){
     try{
-      res = await getAuthorShareCode('https://ghproxy.com/https://raw.githubusercontent.com/jiulan/platypus/main/json/summer_movement.json');
+      res = await getAuthorShareCode('https://ghproxy.com/https://raw.githubusercontent.com/jiulan/helpRepository/main/json/summer_movement.json');
     }catch (e) {}
     if(!res){res = [];}
   }

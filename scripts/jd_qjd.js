@@ -54,7 +54,7 @@ const JD_API_HOST = 'https://car-member.jd.com/api/';
     }
     if(helpAuthorFlag){
         try{
-            helpAuthorInfo = await getAuthorShareCode('https://ghproxy.com/https://raw.githubusercontent.com/jiulan/platypus/main/json/qjd.json');
+            helpAuthorInfo = await getAuthorShareCode('https://ghproxy.com/https://raw.githubusercontent.com/jiulan/helpRepository/main/json/qjd.json');
         }catch (e) {}
         if(!helpAuthorInfo){helpAuthorInfo = [];}
     }
