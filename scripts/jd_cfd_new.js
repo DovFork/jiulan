@@ -35,10 +35,13 @@ function randomString(e) {
     return n
 }
 $.InviteList = []
+let helpAuthorFlag = true;//是否助力作者SH  true 助力，false 不助力
+let helpAuthorInfo = [];
+
 //是否建筑升级
 let buildLvlUp = true;
 // 热气球接客 每次运行接客次数
-let serviceNum = 10;// 每次运行接客次数
+let serviceNum = 30;// 每次运行接客次数
 if ($.isNode() && process.env.gua_wealth_island_serviceNum) {
     serviceNum = Number(process.env.gua_wealth_island_serviceNum);
 }
@@ -71,6 +74,12 @@ $.appId = 10032;
 我把它放在一个神奇的岛屿
 去找吧
 `)
+    if(helpAuthorFlag){
+        try{
+            helpAuthorInfo = await getAuthorShareCode('https://ghproxy.com/https://raw.githubusercontent.com/jiulan/helpRepository/main/json/cfd.json');
+        }catch (e) {}
+        if(!helpAuthorInfo){helpAuthorInfo = [];}
+    }
     await requestAlgo();
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
@@ -95,21 +104,18 @@ $.appId = 10032;
         $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
         $.index = i + 1;
         if ($.InviteList && $.InviteList.length) console.log(`\n******开始【邀请好友助力】*********\n`);
+        //抽取一名幸运娃儿助力
+        if (helpAuthorFlag && helpAuthorInfo.length > 0){
+            let authorList = getRandomArrayElements(helpAuthorInfo,1);
+            console.log(`${$.UserName}给作者助力一次`)
+            $.inviteId = authorList[0];
+            await help();
+            helpAuthorFlag = false;
+        }
+
         for (let j = 0; j < $.InviteList.length && $.canHelp; j++) {
             $.inviteId = $.InviteList[j];
-            console.log(`${$.UserName} 助力 ${$.inviteId}`);
-            let res = await taskGet(`story/helpbystage`, '_cfd_t,bizCode,dwEnv,ptag,source,strShareId,strZone', `&strShareId=${$.inviteId}`)
-            if(res && res.iRet == 0){
-                console.log(`助力成功: 获得${res.Data && res.Data.GuestPrizeInfo && res.Data.GuestPrizeInfo.strPrizeName || ''}`)
-            }else if(res && res.sErrMsg){
-                console.log(res.sErrMsg)
-                if(res.sErrMsg.indexOf('助力次数达到上限') > -1 || res.iRet === 2232 || res.sErrMsg.indexOf('助力失败') > -1){
-                    break
-                }
-            }else{
-                console.log(JSON.stringify(res))
-            }
-            await $.wait(1000);
+            await help();
         }
     }
 })()
@@ -708,7 +714,23 @@ async function UserTask(){
         $.logErr(e);
     }
 }
-
+//助力
+async function help(){
+    await $.wait(1000);
+    console.log(`${$.UserName} 助力 ${$.inviteId}`);
+    let res = await taskGet(`story/helpbystage`, '_cfd_t,bizCode,dwEnv,ptag,source,strShareId,strZone', `&strShareId=${$.inviteId}`)
+    if(res && res.iRet == 0){
+        console.log(`助力成功: 获得${res.Data && res.Data.GuestPrizeInfo && res.Data.GuestPrizeInfo.strPrizeName || ''}`)
+    }else if(res && res.sErrMsg){
+        console.log(res.sErrMsg)
+        if(res.sErrMsg.indexOf('助力次数达到上限') > -1 || res.iRet === 2232 || res.sErrMsg.indexOf('助力失败') > -1){
+            $.canHelp = false;
+            return
+        }
+    }else{
+        console.log(JSON.stringify(res))
+    }
+}
 function printRes(res, msg=''){
     if(res.iRet == 0 && (res.Data || res.ddwCoin || res.ddwMoney || res.strPrizeName)){
         let result = res
