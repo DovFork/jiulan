@@ -219,7 +219,7 @@ async function doJoyMoveDownAll(workJoyInfoList) {
         return true
     }
     for (let i = 0; i < workJoyInfoList.length; i++) {
-        //$.wait(50)
+        $.wait(50)
         if (workJoyInfoList[i].unlock && workJoyInfoList[i].joyDTO) {
             $.log(`从工位移除 => id:${workJoyInfoList[i].joyDTO.id}|name: ${workJoyInfoList[i].joyDTO.name}|level: ${workJoyInfoList[i].joyDTO.level}`)
             await doJoyMove(workJoyInfoList[i].joyDTO.id, 0)
@@ -227,7 +227,7 @@ async function doJoyMoveDownAll(workJoyInfoList) {
     }
     //check
     await getJoyList()
-    await doJoyMoveDownAll($.workJoyInfoList)
+    // await doJoyMoveDownAll($.workJoyInfoList)
 }
 
 async function doJoyMergeAll(activityJoyList) {
