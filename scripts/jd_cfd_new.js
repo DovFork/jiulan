@@ -35,8 +35,6 @@ function randomString(e) {
     return n
 }
 $.InviteList = []
-$.innerInviteList = [];
-const HelpAuthorFlag = true;//是否助力作者SH  true 助力，false 不助力
 
 //是否建筑升级
 let buildLvlUp = true;
@@ -84,6 +82,19 @@ $.appId = 10032;
             console.log(`\n*****开始【京东账号${$.index}】${$.UserName}****\n`);
             UA = `jdpingou;iPhone;5.2.2;14.3;${randomString(40)};network/wifi;model/iPhone12,1;appBuild/100630;ADID/00000000-0000-0000-0000-000000000000;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/0;hasOCPay/0;supportBestPay/0;session/1;pap/JA2019_3111789;brand/apple;supportJDSHWK/1;Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148`
             await run();
+        }
+    }
+
+    for (let i = 0; i < cookiesArr.length; i++) {
+        $.cookie = cookiesArr[i];
+        $.canHelp = true;
+        $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
+        $.index = i + 1;
+        if ($.InviteList && $.InviteList.length) console.log(`\n******开始【邀请好友助力】*********\n`);
+
+        for (let j = 0; j < $.InviteList.length && $.canHelp; j++) {
+            $.inviteId = $.InviteList[j];
+            await help();
         }
     }
 })()
@@ -725,7 +736,23 @@ async function UserTask(){
         $.logErr(e);
     }
 }
-
+//助力
+async function help(){
+    await $.wait(1000);
+    console.log(`${$.UserName} 助力 ${$.inviteId}`);
+    let res = await taskGet(`story/helpbystage`, '_cfd_t,bizCode,dwEnv,ptag,source,strShareId,strZone', `&strShareId=${$.inviteId}`)
+    if(res && res.iRet == 0){
+        console.log(`助力成功: 获得${res.Data && res.Data.GuestPrizeInfo && res.Data.GuestPrizeInfo.strPrizeName || ''}`)
+    }else if(res && res.sErrMsg){
+        console.log(res.sErrMsg)
+        if(res.sErrMsg.indexOf('助力次数达到上限') > -1 || res.iRet === 2232 || res.sErrMsg.indexOf('助力失败') > -1){
+            $.canHelp = false;
+            return
+        }
+    }else{
+        console.log(JSON.stringify(res))
+    }
+}
 function printRes(res, msg=''){
     if(res.iRet == 0 && (res.Data || res.ddwCoin || res.ddwMoney || res.strPrizeName)){
         let result = res
