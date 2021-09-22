@@ -23,6 +23,7 @@ const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [];
 let linkId = '9WA12jYGulArzWS7vcrwhw';
+let runTheTask = false;
 let taskStatus = true;
 let allMessage = '';
 $.cookie = '';
@@ -34,7 +35,9 @@ if ($.isNode()) {
     if (process.env.JD_SPEED_UP_LINK_ID) {
         linkId = process.env.JD_SPEED_UP_LINK_ID || linkId;
     }
-
+    if (process.env.JD_SPEED_UP_RUN) {
+        runTheTask = process.env.JD_SPEED_UP_RUN || runTheTask;
+    }
 } else {
     cookiesArr = [
         $.getdata("CookieJD"),
@@ -45,6 +48,10 @@ if ($.isNode()) {
 !(async () => {
     if (!cookiesArr[0]) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
+        return;
+    }
+    if (!runTheTask){
+        console.log(`\n*****毛太小,加速比较亏默认不跑    需要的添加变量JD_SPEED_UP_RUN=true 执行任务*****\n`);
         return;
     }
     for (let i = 0; i < cookiesArr.length; i++) {
