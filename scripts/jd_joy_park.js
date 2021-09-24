@@ -64,6 +64,7 @@ message = ""
             $.isLogin = true;
             $.nickName = '';
             $.maxJoyCount = 10
+            $.activityJoy = 0
             console.log(`\n\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
 
             //下地后还有有钱买Joy并且买了Joy
@@ -231,10 +232,14 @@ async function doJoyMoveDownAll(workJoyInfoList) {
 }
 
 async function doJoyMergeAll(activityJoyList) {
+    if($.activityJoy>=10){
+        return;
+    }
     let minLevel = Math.min.apply(Math, activityJoyList.map(o => o.level))
     let joyMinLevelArr = activityJoyList.filter(row => row.level === minLevel);
     let joyBaseInfo = await getJoyBaseInfo()
     let fastBuyLevel = joyBaseInfo.fastBuyLevel
+    $.activityJoy = $.activityJoy +1
     if (joyMinLevelArr.length >= 2) {
         $.log(`开始合成 ${minLevel} ${joyMinLevelArr[0].id} <=> ${joyMinLevelArr[1].id} 【限流严重，2秒后合成！如失败会重试】`);
         await $.wait(2000)
