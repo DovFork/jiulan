@@ -337,7 +337,7 @@ function gamblePrizeList() {
             url: `https://api.m.jd.com/?functionId=gamblePrizeList&body=${escape(JSON.stringify(body))}&_t=${+new Date()}&appid=activities_platform&clientVersion=3.5.0`,
             headers: {
                 'Origin': 'https://618redpacket.jd.com',
-                'Cookie': $.cookie,
+                'Cookie': cookie,
                 'Connection': `keep-alive`,
                 'Accept': `com.jd.jdlite`,
                 'Host': `api.m.jd.com`,
@@ -397,7 +397,7 @@ function TotalBean() {
                 Host: "me-api.jd.com",
                 Accept: "*/*",
                 Connection: "keep-alive",
-                Cookie: $.cookie,
+                Cookie: cookie,
                 "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
                 "Accept-Language": "zh-cn",
                 "Referer": "https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&",
