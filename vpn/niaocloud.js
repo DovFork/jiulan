@@ -25,7 +25,7 @@ cron "9 10 * * *" script-path=niaocloud.js,tag=小鸟云签到
 小鸟云签到 = type=cron,script-path=niaocloud.js, cronexpr="9 10 * * *", timeout=3600, enable=true
  */
 const $ = new Env('小鸟云签到');
-let NIAO_CLOUD_API = 'http://niaoyun.fun'
+let NIAO_CLOUD_API = 'https://niaoyun.fun'
 let cookieList=[];
 let ny_cookie="";
 let ny_email="";
