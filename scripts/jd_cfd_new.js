@@ -1,27 +1,24 @@
 /*
-京喜财富岛
-cron 1 * * * * jd_cfd.js
-更新时间：2021-9-11
-活动入口：京喜APP-我的-京喜财富岛
-
-已支持IOS双京东账号,Node.js支持N个京东账号
-脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
-============Quantumultx===============
+京喜财富岛 原作者smiek2221
+活动地址: 京喜APP-我的-京喜财富岛
+活动时间：长期
+更新时间：2021-07-13 12:00
+脚本兼容: QuantumultX, Surge,Loon, JSBox, Node.js
+#是否建筑升级
+export JD_CFD_LVL_UP="false"
+=================================Quantumultx=========================
 [task_local]
 #京喜财富岛
-1 * * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfd.js, tag=京喜财富岛, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
-
-================Loon==============
+10 3-20/1 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_new.js, tag=京喜财富岛, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+=================================Loon===================================
 [Script]
-cron "1 * * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfd.js,tag=京喜财富岛
-
-===============Surge=================
-京喜财富岛 = type=cron,cronexp="1 * * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfd.js
-
-============小火箭=========
-京喜财富岛 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfd.js, cronexpr="1 * * * *", timeout=3600, enable=true
+cron "10 3-20/1 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_new.js,tag=京喜财富岛
+===================================Surge================================
+京喜财富岛 = type=cron,cronexp="10 3-20/1 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_new.js
+====================================小火箭=============================
+京喜财富岛 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_new.js, cronexpr="10 3-20/1 * * *", timeout=3600, enable=true
  */
-const $ = new Env("京喜财富岛");
+const $ = new Env('京喜财富岛');
 const JD_API_HOST = "https://m.jingxi.com/";
 const notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require("./jdCookie.js") : "";
