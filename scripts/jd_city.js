@@ -309,6 +309,7 @@ function requireConfig() {
         } else {
           shareCodes = process.env.CITY_SHARECODES.split('&');
         }
+        console.log("您提供了 "+shareCodes.length+"个账号的助力码")
       }
     }
     console.log(`共${cookiesArr.length}个京东账号\n`);
