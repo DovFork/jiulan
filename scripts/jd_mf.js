@@ -2,14 +2,14 @@
 author：https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_mf.js
 [task_local]
 #京东小魔方
-20 20 * * * jd_mf.js, tag= 京东小魔方
+10 2,9 * * * jd_mf.js, tag= 京东小魔方
 ================Loon==============
 [Script]
-cron "20 20 * * *" script-path= jd_mf.js,tag= 京东小魔方
+cron "10 2,9 * * *" script-path= jd_mf.js,tag= 京东小魔方
 ===============Surge=================
-京东小魔方 = type=cron,cronexp="20 20 * * *",wake-system=1,timeout=3600,script-path= jd_mf.js
+京东小魔方 = type=cron,cronexp="10 2,9 * * *",wake-system=1,timeout=3600,script-path= jd_mf.js
 ============小火箭=========
-京东小魔方 = type=cron,script-path= jd_mf.js, cronexpr="20 20 * * *", timeout=3600, enable=true
+京东小魔方 = type=cron,script-path= jd_mf.js, cronexpr="10 2,9 * * *", timeout=3600, enable=true
 */
 const $ = new Env('京东小魔方');
 const notify = $.isNode() ? require('./sendNotify') : '';
