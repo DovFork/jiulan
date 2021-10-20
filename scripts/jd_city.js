@@ -287,7 +287,7 @@ function shareCodesFormat() {
     }
     const readShareCodeRes = await readShareCode();
     if (readShareCodeRes) {
-      $.newShareCodes = [...new Set([...$.newShareCodes, ...(readShareCodeRes || [])])];
+      $.newShareCodes = [...new Set([...$.newShareCodes, ...(getRandomArrayElements(readShareCodeRes,1) || [])])];
     }
     console.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify($.newShareCodes)}`)
     resolve();
@@ -324,6 +324,22 @@ function requireConfig() {
     console.log(`您提供了${$.shareCodesArr.length}个账号的${$.name}助力码\n`);
     resolve()
   })
+}
+/**
+ * 随机从一数组里面取
+ * @param arr
+ * @param count
+ * @returns {Buffer}
+ */
+function getRandomArrayElements(arr, count) {
+  var shuffled = arr.slice(0), i = arr.length, min = i - count, temp, index;
+  while (i-- > min) {
+    index = Math.floor((i + 1) * Math.random());
+    temp = shuffled[index];
+    shuffled[index] = shuffled[i];
+    shuffled[i] = temp;
+  }
+  return shuffled.slice(min);
 }
 function TotalBean() {
   return new Promise(async resolve => {
