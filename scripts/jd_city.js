@@ -6,17 +6,17 @@
 =================================Quantumultx=========================
 [task_local]
 #城城领现金
-0 0-23/1 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_city.js, tag=城城领现金, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+0 0-23/1 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_city.js, tag=城城领现金, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 =================================Loon===================================
 [Script]
-cron "0 0-23/1 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_city.js,tag=城城领现金
+cron "0 0-23/1 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_city.js,tag=城城领现金
 
 ===================================Surge================================
-城城领现金 = type=cron,cronexp="0 0-23/1 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_city.js
+城城领现金 = type=cron,cronexp="0 0-23/1 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_city.js
 
 ====================================小火箭=============================
-城城领现金 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_city.js, cronexpr="0 0-23/1 * * *", timeout=3600, enable=true
+城城领现金 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_city.js, cronexpr="0 0-23/1 * * *", timeout=3600, enable=true
  */
 const $ = new Env('城城领现金');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -146,8 +146,11 @@ function getInfo(inviteId, flag = false) {
             data = JSON.parse(data);
             if (data.code === 0) {
               if (data.data && data['data']['bizCode'] === 0) {
-                if (flag) console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${data.data && data.data.result.userActBaseInfo.inviteId}\n`);
-                for(let vo of data.data.result && data.data.result.mainInfos || []){
+                if (flag) {
+                  console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${data.data && data.data.result.userActBaseInfo.inviteId}\n`);
+                }
+
+                  for(let vo of data.data.result && data.data.result.mainInfos || []){
                   if (vo && vo.remaingAssistNum === 0 && vo.status === "1") {
                     console.log(vo.roundNum)
                     await receiveCash(vo.roundNum)
@@ -250,7 +253,7 @@ function city_lotteryAward() {
 }
 function readShareCode() {
   return new Promise(async resolve => {
-    $.get({url: `https://raw.githubusercontent.com/jiulan/helpRepository/main/json/city.json`, 'timeout': 10000}, (err, resp, data) => {
+    $.get({url: `https://ghproxy.com/https://raw.githubusercontent.com/jiulan/helpRepository/main/json/city.json`, 'timeout': 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -300,6 +303,7 @@ function requireConfig() {
         exchangeFlag = process.env.JD_CITY_EXCHANGE || exchangeFlag;
       }
       if (process.env.CITY_SHARECODES) {
+        console.log("已获取到CITY_SHARECODES变量配置 ")
         if (process.env.CITY_SHARECODES.indexOf('\n') > -1) {
           shareCodes = process.env.CITY_SHARECODES.split('\n');
         } else {
