@@ -35,7 +35,8 @@ if ($.isNode()) {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
-let inviteCodes = []
+let inviteCodes = ['aITgwO6sQAOgeIeZW5h_1vAOmoNepJrejvDsQvNBsumV']
+let inviteCode='';
 !(async () => {
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
@@ -65,10 +66,15 @@ let inviteCodes = []
         }
         continue
       }
+      inviteCode ='';
       await getInfo('',true);
       await shareCodesFormat()
       for (let i = 0; i < $.newShareCodes.length; ++i) {
         console.log(`\n开始助力 【${$.newShareCodes[i]}】`)
+        if (inviteCode === $.newShareCodes[i]){
+          console.log(`\n自己不助力  下一个 `)
+          break
+        }
         let res = await getInfo($.newShareCodes[i])
         if (res && res['data'] && res['data']['bizCode'] === 0) {
           if (res['data']['result']['toasts'] && res['data']['result']['toasts'][0] && res['data']['result']['toasts'][0]['status'] === '3') {
@@ -80,9 +86,11 @@ let inviteCodes = []
           }
         }
         if ((res && res['status'] && res['status'] === '3') || (res && res.data && res.data.bizCode === -11)) {
+          console.log(`助力次数耗尽 || 黑号`)
           // 助力次数耗尽 || 黑号
           break
         }
+        console.log(`助力结束`)
       }
       await getInviteInfo();//雇佣
       if (exchangeFlag) {
@@ -147,10 +155,8 @@ function getInfo(inviteId, flag = false) {
               if (data.data && data['data']['bizCode'] === 0) {
                 if (flag) {
                   console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${data.data && data.data.result.userActBaseInfo.inviteId}\n`);
-                  //未配置取前2个
-                  if (inviteCodes.length < 2){
-                    inviteCodes.push(data.data.result.userActBaseInfo.inviteId)
-                  }
+                  inviteCodes.push(data.data.result.userActBaseInfo.inviteId)
+                  inviteCode = data.data.result.userActBaseInfo.inviteId
                 }
 
                   for(let vo of data.data.result && data.data.result.mainInfos || []){
@@ -282,9 +288,9 @@ function shareCodesFormat() {
     // console.log(`第${$.index}个京东账号的助力码:::${$.shareCodesArr[$.index - 1]}`)
     $.newShareCodes = [];
     if ($.shareCodesArr[$.index - 1]) {
-      $.newShareCodes = $.shareCodesArr;
+      $.newShareCodes = $.shareCodesArr[$.index - 1].split('@');
     } else {
-      console.log(`由于您第${$.index}个京东账号未提供shareCode,将组力前2个ck\n`)
+      console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
       const tempIndex = $.index > inviteCodes.length ? (inviteCodes.length - 1) : ($.index - 1);
       $.newShareCodes = inviteCodes[tempIndex].split('@');
     }
