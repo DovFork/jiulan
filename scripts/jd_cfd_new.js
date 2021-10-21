@@ -273,9 +273,6 @@ async function cfd() {
         await $.wait(2000);
         await browserTask(1);
 
-        //热气球接客
-        await service(serviceNum);
-
         await $.wait(2000);
         const endInfo = await getUserInfo(false);
         $.result.push(
@@ -1610,32 +1607,7 @@ function awardTask(taskType, taskinfo) {
         }
     });
 }
-// 热气球接客
-async function service(num = 1){
-    return new Promise(async (resolve) => {
-        try{
-            console.log(`\n热气球接客`)
-            let arr = ['food','sea','shop','fun']
-            for(i=1;num--;i++){
-                let strBuildIndex = arr[Math.floor((Math.random()*arr.length))]
-                console.log(`第${i}/${num+i}次:${strBuildIndex}`)
-                let res = await taskUrl(`user/SpeedUp`, `strZone&ptag=&strBuildIndex=${strBuildIndex}`)
-                if(res && res.iRet == 0){
-                    console.log(`当前气球次数:${res.dwTodaySpeedPeople} 金币速度:${res.ddwSpeedCoin}`)
-                    // additional= `&strToken=${res.story.strToken}&ddwTriTime=${res.story.ddwTriTime}`
-                    // stk = `_cfd_t,bizCode,dwEnv,ptag,source,strBuildIndex,strZone`
-                    // await taskGet(`story/QueryUserStory`, stk, additional)
-                    await $.wait(1000)
-                }
-            }
-        }catch (e) {
-            $.logErr(e);
-        }
-        finally {
-            resolve();
-        }
-    })
-}
+
 // 新手任务
 async function noviceTask(){
     let body = ``

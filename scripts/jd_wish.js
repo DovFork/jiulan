@@ -3,7 +3,7 @@
 活动入口：京东-京东众筹-众筹许愿池
 更新时间：2021-08-06
 脚本兼容: QuantumultX, Surge,Loon, JSBox, Node.js
-更新地址  https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_wish.js
+更新地址  https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_wish.js
 =================================Quantumultx=========================
 [task_local]
 #众筹许愿池

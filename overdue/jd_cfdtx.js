@@ -9,17 +9,17 @@ cron 0 0 * * * jd_cfdtx.js
 ============Quantumultx===============
 [task_local]
 #京喜财富岛提现
-0 0 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js, tag=京喜财富岛提现, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
+0 0 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfdtx.js, tag=京喜财富岛提现, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "0 0 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js,tag=京喜财富岛提现
+cron "0 0 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfdtx.js,tag=京喜财富岛提现
 
 ===============Surge=================
-京喜财富岛提现 = type=cron,cronexp="0 0 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js
+京喜财富岛提现 = type=cron,cronexp="0 0 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfdtx.js
 
 ============小火箭=========
-京喜财富岛提现 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js, cronexpr="0 0 * * *", timeout=3600, enable=true
+京喜财富岛提现 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfdtx.js, cronexpr="0 0 * * *", timeout=3600, enable=true
  */
 /*
 京喜财富岛提现
@@ -32,17 +32,17 @@ cron 59 11,12,23 * * * jd_cfdtx.js
 ============Quantumultx===============
 [task_local]
 #京喜财富岛提现
-59 11,12,23 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js, tag=京喜财富岛提现, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
+59 11,12,23 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfdtx.js, tag=京喜财富岛提现, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "59 11,12,23 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js,tag=京喜财富岛提现
+cron "59 11,12,23 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfdtx.js,tag=京喜财富岛提现
 
 ===============Surge=================
-京喜财富岛提现 = type=cron,cronexp="59 11,12,23 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js
+京喜财富岛提现 = type=cron,cronexp="59 11,12,23 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfdtx.js
 
 ============小火箭=========
-京喜财富岛提现 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfdtx.js, cronexpr="59 11,12,23 * * *", timeout=3600, enable=true
+京喜财富岛提现 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfdtx.js, cronexpr="59 11,12,23 * * *", timeout=3600, enable=true
  */
 
 const $ = new Env("京喜财富岛提现");

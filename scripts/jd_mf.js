@@ -1,5 +1,5 @@
 /*
-author：https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_mf.js
+author：https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_mf.js
 [task_local]
 #京东小魔方
 10 2,9 * * * jd_mf.js, tag= 京东小魔方
