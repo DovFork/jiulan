@@ -1,5 +1,6 @@
 /*
 城城领现金
+入口 https://bunearth.m.jd.com/babelDiy/Zeus/x4pWW6pvDwW7DjxMmBbnzoub8J/index.html?inviteId=aITgwO6sQAOgeIeZW5h_1vAOmoNepJrejvDsQvNBsumV
 活动时间：2021-05-25到2021-06-03
 更新时间：2021-05-24 014:55
 脚本兼容: QuantumultX, Surge,Loon, JSBox, Node.js

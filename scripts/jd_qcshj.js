@@ -76,7 +76,7 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
       if ($.UserName === 'null') continue;
       await main()
       if($.beans > 0) $.allMsg += `京东账号${$.index} ${$.nickName || $.UserName}\n获得${$.beans}京豆\n`
-      
+
     }
   }
   if($.helpCodes.length > 0)
@@ -164,7 +164,7 @@ async function main() {
         await browse(f.taskToken, t.taskId, 0)
       }
     } else if (t.taskType == 21) {
-      //todo 开卡
+
     }
     await $.wait(1000)
   }
