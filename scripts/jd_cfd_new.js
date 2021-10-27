@@ -27,23 +27,15 @@ $.notifyTime = $.getdata("cfd_notifyTime");
 $.result = [];
 $.shareCodes = [];
 let cookiesArr = [], cookie = '', token = '';
-let UA, UAInfo = {}, num
+let UA, UAInfo = {};
 let nowTimes;
 const randomCount = $.isNode() ? 20 : 3;
-// 热气球接客 每次运行接客次数
-let serviceNum = 30;// 每次运行接客次数
-if ($.isNode() && process.env.gua_wealth_island_serviceNum) {
-    serviceNum = Number(process.env.gua_wealth_island_serviceNum);
-}
-
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
     })
-    if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => { };
-    if (process.env.gua_wealth_island_serviceNum) {
-        serviceNum = Number(process.env.gua_wealth_island_serviceNum);
-    }
+    if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
+    if (JSON.stringify(process.env).indexOf('GITHUB') > -1) process.exit(0);
 } else {
     cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
@@ -89,7 +81,6 @@ $.appId = 10028;
         $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
         $.canHelp = true
         UA = UAInfo[$.UserName]
-        num = 0
         if ($.newShareCodes && $.newShareCodes.length) {
             console.log(`\n开始互助\n`);
             for (let j = 0; j < $.newShareCodes.length && $.canHelp; j++) {
@@ -103,6 +94,8 @@ $.appId = 10028;
                     continue
                 }
             }
+        } else {
+            break
         }
     }
     await showMsg();
@@ -129,13 +122,15 @@ async function cfd() {
 
         // 寻宝
         console.log(`寻宝`)
-        let XBDetail = beginInfo.XbStatus.XBDetail.filter((x) => x.dwRemainCnt !== 0 )
+        let XBDetail = beginInfo.XbStatus.XBDetail.filter((x) => x.dwRemainCnt !== 0)
         if (XBDetail.length !== 0) {
             console.log(`开始寻宝`)
+            $.break = false
             for (let key of Object.keys(XBDetail)) {
                 let vo = XBDetail[key]
                 await $.wait(2000)
                 await TreasureHunt(vo.strIndex)
+                if ($.break) break
             }
         } else {
             console.log(`暂无宝物`)
@@ -309,6 +304,7 @@ function TreasureHunt(strIndex) {
                         }
                     } else {
                         console.log(`寻宝失败：${data.sErrMsg}`)
+                        $.break = true
                     }
                 }
             } catch (e) {
@@ -426,7 +422,7 @@ async function composePearlState(type) {
 }
 function realTmReport(strMyShareId) {
     return new Promise((resolve) => {
-        $.get(taskUrl(`user/RealTmReport`, `__t=${Date.now()}&dwIdentityType=0&strBussKey=composegame&strMyShareId=${strMyShareId}&ddwCount=10`), (err, resp, data) => {
+        $.get(taskUrl(`user/RealTmReport`, `dwIdentityType=0&strBussKey=composegame&strMyShareId=${strMyShareId}&ddwCount=5`), (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -488,32 +484,13 @@ function pearlDailyDraw(ddwSeasonStartTm, strToken) {
                 } else {
                     data = JSON.parse(data);
                     if (data.iRet === 0) {
-                        console.log(`抽奖成功：获得${data.strPrizeName || JSON.stringify(data)}\n`)
+                        if (data.dwPrizeType === 0) {
+                            console.log(`合成珍珠领奖成功：获得${data.ddwCoin}金币`)
+                        } else if (data.dwPrizeType === 1) {
+                            console.log(`合成珍珠领奖成功：获得${data.ddwMoney}财富\n`)
+                        }
                     } else {
-                        console.log(`抽奖失败：${data.sErrMsg}\n`)
-                    }
-                }
-            } catch (e) {
-                $.logErr(e, resp);
-            } finally {
-                resolve(data);
-            }
-        })
-    })
-}
-function composePearlAward(strDT, type, size) {
-    return new Promise((resolve) => {
-        $.get(taskUrl(`user/ComposePearlAward`, `__t=${Date.now()}&type=${type}&size=${size}&strBT=${strDT}`), (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(`${JSON.stringify(err)}`)
-                    console.log(`${$.name} ComposePearlAward API请求失败，请检查网路重试`)
-                } else {
-                    data = JSON.parse(data);
-                    if (data.iRet === 0) {
-                        console.log(`模拟操作中奖：获得${data.ddwAwardHb / 100}元红包，总计获得${data.ddwVirHb / 100}元红包`)
-                    } else {
-                        console.log(`模拟操作未中奖：${data.sErrMsg}`)
+                        console.log(`合成珍珠领奖失败：${data.sErrMsg}\n`)
                     }
                 }
             } catch (e) {
@@ -1204,14 +1181,15 @@ async function getBuildInfo(body, buildList, type = true) {
                         const body = `strBuildIndex=${data.strBuildIndex}&dwType=1`
                         let collectCoinRes = await collectCoin(body)
                         console.log(`【${buildNmae}】收集${collectCoinRes.ddwCoin}金币`)
-                        await $.wait(2000)
+                        await $.wait(3000)
                         await getUserInfo(false)
                         console.log(`升级建筑`)
                         console.log(`【${buildNmae}】当前等级：${buildList.dwLvl}`)
                         console.log(`【${buildNmae}】升级需要${data.ddwNextLvlCostCoin}金币，保留升级需要的3倍${data.ddwNextLvlCostCoin * 3}金币，当前拥有${$.info.ddwCoinBalance}金币`)
-                        if(data.dwCanLvlUp > 0 && $.info.ddwCoinBalance >= (data.ddwNextLvlCostCoin * 3) ) {
+                        if(data.dwCanLvlUp > 0 && $.info.ddwCoinBalance >= (data.ddwNextLvlCostCoin * 3)) {
                             console.log(`【${buildNmae}】满足升级条件，开始升级`)
                             const body = `ddwCostCoin=${data.ddwNextLvlCostCoin}&strBuildIndex=${data.strBuildIndex}`
+                            await $.wait(2000)
                             let buildLvlUpRes = await buildLvlUp(body)
                             if (buildLvlUpRes.iRet === 0) {
                                 console.log(`【${buildNmae}】升级成功：获得${data.ddwLvlRich}财富\n`)
@@ -1299,16 +1277,18 @@ function helpByStage(shareCodes) {
                     data = JSON.parse(data);
                     if (data.iRet === 0 || data.sErrMsg === 'success') {
                         console.log(`助力成功：获得${data.Data.GuestPrizeInfo.strPrizeName}`)
-                    } else if (data.iRet === 2232 || data.sErrMsg === '今日助力次数达到上限，明天再来帮忙吧~') {
+                    } else if (data.iRet === 2235 || data.sErrMsg === '今日助力次数达到上限，明天再来帮忙吧~') {
                         console.log(`助力失败：${data.sErrMsg}`)
                         $.canHelp = false
+                    } else if (data.iRet === 2232 || data.sErrMsg === '分享链接已过期') {
+                        console.log(`助力失败：${data.sErrMsg}`)
+                        $.delcode = true
                     } else if (data.iRet === 9999 || data.sErrMsg === '您还没有登录，请先登录哦~') {
                         console.log(`助力失败：${data.sErrMsg}`)
                         $.canHelp = false
                     } else if (data.iRet === 2229 || data.sErrMsg === '助力失败啦~') {
-                        console.log(`助力失败：您的账号或被助力的账号可能已黑，请联系客服`)
-                        num++
-                        if (num === 5) $.canHelp = false
+                        console.log(`助力失败：您的账号已黑`)
+                        $.canHelp = false
                     } else if (data.iRet === 2190 || data.sErrMsg === '达到助力上限') {
                         console.log(`助力失败：${data.sErrMsg}`)
                         $.delcode = true
@@ -1325,38 +1305,6 @@ function helpByStage(shareCodes) {
     })
 }
 
-function getAuthorShareCode(url) {
-    return new Promise(async resolve => {
-        const options = {
-            url: `${url}?${new Date()}`, "timeout": 10000, headers: {
-                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-            }
-        };
-        if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
-            const tunnel = require("tunnel");
-            const agent = {
-                https: tunnel.httpsOverHttp({
-                    proxy: {
-                        host: process.env.TG_PROXY_HOST,
-                        port: process.env.TG_PROXY_PORT * 1
-                    }
-                })
-            }
-            Object.assign(options, { agent })
-        }
-        $.get(options, async (err, resp, data) => {
-            try {
-                resolve(JSON.parse(data))
-            } catch (e) {
-                // $.logErr(e, resp)
-            } finally {
-                resolve();
-            }
-        })
-        await $.wait(10000)
-        resolve();
-    })
-}
 
 // 获取用户信息
 function getUserInfo(showInvite = true) {
@@ -1768,91 +1716,29 @@ function randomString(e) {
 function showMsg() {
     return new Promise(async (resolve) => {
         if ($.result.length) {
-            console.log($.result);
-            // if ($.notifyTime) {
-            //   const notifyTimes = $.notifyTime.split(",").map((x) => x.split(":"));
-            //   const now = $.time("HH:mm").split(":");
-            //   console.log(`\n${JSON.stringify(notifyTimes)}`);
-            //   console.log(`\n${JSON.stringify(now)}`);
-            //   if ( notifyTimes.some((x) => x[0] === now[0] && (!x[1] || x[1] === now[1])) ) {
-            //     $.msg($.name, "", `${$.result.join("\n")}`);
-            //   }
-            // } else {
-            //   $.msg($.name, "", `${$.result.join("\n")}`);
-            // }
-            //
-            // if ($.isNode() && process.env.CFD_NOTIFY_CONTROL)
-            //   await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName}`, `${$.result.join("\n")}`);
+            if ($.notifyTime) {
+                const notifyTimes = $.notifyTime.split(",").map((x) => x.split(":"));
+                const now = $.time("HH:mm").split(":");
+                console.log(`\n${JSON.stringify(notifyTimes)}`);
+                console.log(`\n${JSON.stringify(now)}`);
+                if ( notifyTimes.some((x) => x[0] === now[0] && (!x[1] || x[1] === now[1])) ) {
+                    $.msg($.name, "", `${$.result.join("\n")}`);
+                }
+            } else {
+                $.msg($.name, "", `${$.result.join("\n")}`);
+            }
+
+            if ($.isNode() && process.env.CFD_NOTIFY_CONTROL)
+                await notify.sendNotify(`${$.name} - 账号${$.index} - ${$.nickName}`, `${$.result.join("\n")}`);
         }
         resolve();
     });
 }
 
-function readShareCode() {
-    return new Promise(async resolve => {
-        $.get({url: `http://transfer.nz.lu/cfd`, timeout: 10000}, (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(JSON.stringify(err))
-                    console.log(`${$.name} readShareCode API请求失败，请检查网路重试`)
-                } else {
-                    if (data) {
-                        console.log(`\n随机取${randomCount}个码放到您固定的互助码后面(不影响已有固定互助)`)
-                        data = JSON.parse(data);
-                    }
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            } finally {
-                resolve(data);
-            }
-        })
-        await $.wait(10000);
-        resolve()
-    })
-}
-function uploadShareCode(code) {
-    return new Promise(async resolve => {
-        $.get({url: `http://transfer.nz.lu/upload/cfd?code=${code}`, timeout: 10000}, (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(JSON.stringify(err))
-                    console.log(`${$.name} uploadShareCode API请求失败，请检查网路重试`)
-                } else {
-                    if (data) {
-                        if (data === 'OK') {
-                            console.log(`已自动提交助力码\n`)
-                        } else if (data === 'error') {
-                            console.log(`助力码格式错误，乱玩API是要被打屁屁的~\n`)
-                        } else if (data === 'full') {
-                            console.log(`车位已满，请等待下一班次\n`)
-                        } else if (data === 'exist') {
-                            console.log(`助力码已经提交过了~\n`)
-                        } else {
-                            console.log(`未知错误：${data}\n`)
-                        }
-                    }
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            } finally {
-                resolve(data);
-            }
-        })
-        await $.wait(10000);
-        resolve()
-    })
-}
 //格式化助力码
 function shareCodesFormat() {
     return new Promise(async resolve => {
-        $.newShareCodes = []
-        const readShareCodeRes = await readShareCode();
-        if (readShareCodeRes && readShareCodeRes.code === 200) {
-            $.newShareCodes = [...new Set([...$.shareCodes, ...(readShareCodeRes.data || [])])];
-        } else {
-            $.newShareCodes = [...new Set([...$.shareCodes])];
-        }
+        $.newShareCodes = [...new Set([...$.shareCodes, ...$.strMyShareIds])];
         console.log(`您将要助力的好友${JSON.stringify($.newShareCodes)}`)
         resolve();
     })
