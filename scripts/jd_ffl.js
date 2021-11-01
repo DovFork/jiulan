@@ -21,7 +21,7 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 //IOS等用户直接用NobyDa的jd cookie
-let cookiesArr = [], cookie = '', message = '', linkId = 'yMVR-_QKRd2Mq27xguJG-w', fflLinkId = 'YhCkrVusBVa_O2K-7xE6hA';
+let cookiesArr = [], cookie = '', message = '', linkId = 'PFbUR7wtwUcQ860Sn8WRfw', fflLinkId = 'YhCkrVusBVa_O2K-7xE6hA';
 const money = process.env.JD_RED_PACKET_VAL || 0.3
 const JD_API_HOST = 'https://api.m.jd.com/api';
 if ($.isNode()) {
@@ -218,6 +218,7 @@ function openRedReward(functionId = 'gambleChangeReward', type) {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
                     console.log(`${$.name} API请求失败，请检查网路重试`)
+                    $.changeReward = false;
                 } else {
                     if (data) {
                         console.log(`翻翻乐结果：${data}\n`);

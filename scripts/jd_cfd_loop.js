@@ -83,12 +83,12 @@ async function cfd() {
             console.log(`还未开通活动，请先开通\n`)
             return
         }
-        if ($.info.buildInfo.dwTodaySpeedPeople !== 500) {
-            await $.wait(500)
-            await speedUp()
-        } else {
-            console.log(`热气球接客已达上限，跳过执行\n`)
-        }
+        // if ($.info.buildInfo.dwTodaySpeedPeople !== 500) {
+        //     await $.wait(500)
+        //     await speedUp()
+        // } else {
+        //     console.log(`热气球接客已达上限，跳过执行\n`)
+        // }
         await $.wait(500)
         await queryshell()
     } catch (e) {
