@@ -45,7 +45,7 @@ const BASE_URL = 'https://m.jingxi.com/cubeactive/steprewardv3'
         '助力逻辑：先自己京东账号相互助力，如有剩余助力机会，则助力作者\n' +
         '温馨提示：如提示助力火爆，可尝试寻找京东客服')
     let res = []
-    res = await getAuthorShareCode('https://raw.githubusercontent.com/jiulan/helpRepository/main/json/jxhb.json')
+    res = await getAuthorShareCode('https://ghproxy.com/https://raw.githubusercontent.com/jiulan/helpRepository/main/json/jxhb.json')
     if (res && res.activeId) $.activeId = res.activeId;
     $.authorMyShareIds = [...((res && res.codes) || [])];
     //开启红包,获取互助码
@@ -112,7 +112,6 @@ const BASE_URL = 'https://m.jingxi.com/cubeactive/steprewardv3'
     //拆红包
     for (let i = 0; i < cookiesArr.length; i++) {
         cookie = cookiesArr[i];
-        $.cookie = cookie;
         $.canOpenGrade = true;
         $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
         UA = UAInfo[$.UserName]
