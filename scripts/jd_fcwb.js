@@ -1,4 +1,22 @@
-const $ = new Env('搞基大神-发财挖宝助力');
+/*
+发财挖宝
+入口 极速版-发财挖宝
+活动时间：2021-05-25到2021-06-03
+更新时间：2021-05-24 014:55
+脚本兼容: QuantumultX, Surge,Loon, JSBox, Node.js
+=================================Quantumultx=========================
+[task_local]
+#发财挖宝
+6 0,10,20 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcwb.js, tag=发财挖宝, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+=================================Loon===================================
+[Script]
+cron "6 0,10,20 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcwb.js,tag=发财挖宝
+===================================Surge================================
+发财挖宝 = type=cron,cronexp="6 0,10,20 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcwb.js
+====================================小火箭=============================
+发财挖宝 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcwb.js, cronexpr="6 0,10,20 * * *", timeout=3600, enable=true
+ */
+const $ = new Env('发财挖宝');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -48,12 +66,7 @@ if ($.isNode()) {
 
         }
         console.log('\n入口 狗东极速版 我的 发财挖宝\n');
-        console.log('\n本脚本无任何内置助力\n如果你发现有那么就是别人二改加的\n一切与本人无关\n');
         await home()
-        console.log('\n注意全部助力给账号一\n');
-        console.log('\n注意全部助力给账号一\n');
-        console.log('\n注意全部助力给账号一\n');
-
     }
 
 
