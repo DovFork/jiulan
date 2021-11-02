@@ -27,6 +27,7 @@ let cookiesArr = [], cookie = '', message;
 let roundList =[]
 let insertCodes = []
 let inviteCodes = []
+let linkId = "yCcpwTLIbY6pjaM42ACUVg"
 
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
@@ -68,8 +69,8 @@ if ($.isNode()) {
         roundList = []
         console.log('\n入口 狗东极速版 我的 发财挖宝\n');
         await home()
-        let data = roundList.filter(e => e.round===curRound)
 
+        let data = roundList.filter(e => e.round===curRound)
         if (!data[0]){
             continue
         }
@@ -125,7 +126,7 @@ function wb(round,rowIdx,colIdx) {
 
 
         const nm= {
-            url: `${JD_API_HOST}/?functionId=happyDigDo&body={"round":${curRound},"rowIdx":${rowIdx},"colIdx":${colIdx},"linkId":"yCcpwTLIbY6pjaM42ACUVg"}&t=1635561607124&appid=activities_platform&client=H5&clientVersion=1.0.0`,
+            url: `${JD_API_HOST}/?functionId=happyDigDo&body={"round":${curRound},"rowIdx":${rowIdx},"colIdx":${colIdx},"linkId":${linkId}}&t=1635561607124&appid=activities_platform&client=H5&clientVersion=1.0.0`,
 
             headers: {
 
@@ -163,7 +164,7 @@ function wb(round,rowIdx,colIdx) {
 }
 function home() {
     return new Promise((resolve) => {
-        let body = {"linkId":"yCcpwTLIbY6pjaM42ACUVg"}
+        let body = {"linkId":linkId}
         $.get(taskurl('happyDigHome',body), async (err, resp, data) => {
             // console.log(data)
             try {
@@ -204,38 +205,12 @@ function home() {
     })
 }
 
-function BROWSE_CHANNEL(taskId) {
-    return new Promise((resolve) => {
-        let body = {"linkId":"yCcpwTLIbY6pjaM42ACUVg","taskType":"BROWSE_CHANNEL","taskId":357,"channel":`${taskId}`}
-        $.get(taskurl('apTaskDetail',body), async (err, resp, data) => {
-
-            try {
-                if (err) {
-                    console.log(`${JSON.stringify(err)}`)
-                    console.log(`${$.name} API请求失败，请检查网路重试`)
-                } else {
-                    if (safeGet(data)) {
-                        data = JSON.parse(data);
-                        if(data.success==true){
-                            console.log('任务：'+data.errMsg)
-                        }else if(data.success==false){
-                            console.log('任务已经完成')}
-                    }
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            } finally {
-                resolve(data);
-            }
-        })
-    })
-}
 
 function help(a,b) {
     return new Promise((resolve) => {
 
         const nm= {
-            url: `${JD_API_HOST}/?functionId=happyDigHelp&body={"linkId":"yCcpwTLIbY6pjaM42ACUVg","inviter":"${a}","inviteCode":"${b}"}&t=1635561607124&appid=activities_platform&client=H5&clientVersion=1.0.0`,
+            url: `${JD_API_HOST}/?functionId=happyDigHelp&body={"linkId":${linkId},"inviter":"${a}","inviteCode":"${b}"}&t=1635561607124&appid=activities_platform&client=H5&clientVersion=1.0.0`,
 
             headers: {
 
