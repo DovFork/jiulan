@@ -6,17 +6,17 @@
 ============Quantumultx===============
 [task_local]
 #发财大赢家
-1 0 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcdyj.js, tag=新潮品牌狂欢, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+1 10 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcdyj.js, tag=新潮品牌狂欢, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "1 0 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcdyj.js tag=翻翻乐
+cron "1 10 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcdyj.js tag=翻翻乐
 
 ===============Surge=================
-发财大赢家 = type=cron,cronexp="1 0 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcdyj.js
+发财大赢家 = type=cron,cronexp="1 10 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcdyj.js
 
 ============小火箭=========
-发财大赢家 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcdyj.js, cronexpr="1 0 * * *", timeout=3600, enable=true
+发财大赢家 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_fcdyj.js, cronexpr="1 10 * * *", timeout=3600, enable=true
 
  */
 const $ = new Env('发财大赢家');
@@ -24,6 +24,7 @@ const $ = new Env('发财大赢家');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const openred = $.isNode() ? (process.env.openred ? process.env.openred : 1) : 1 //选择哪个号开包
 const dyjCode = $.isNode() ? (process.env.dyjCode ? process.env.dyjCode : null) : null //选择哪个号开包
+const linkid = $.isNode() ? (process.env.dyjLinkId ? process.env.dyjLinkId : "PFbUR7wtwUcQ860Sn8WRfw") : "PFbUR7wtwUcQ860Sn8WRfw"
 let helpAuthorFlag = true;//是否助力作者SH  true 助力，false 不助力
 let helpAuthorInfo = []
 
@@ -57,7 +58,6 @@ const JD_API_HOST = `https://api.m.jd.com`;
     $.needhelp = true
     $.canDraw = false
     $.canHelp = true;
-    $.linkid = "yMVR-_QKRd2Mq27xguJG-w"
 
     if (helpAuthorFlag) {
         try {
@@ -139,7 +139,7 @@ const JD_API_HOST = `https://api.m.jd.com`;
 
 function Draw() {
     return new Promise(async (resolve) => {
-        let options = taskUrl("exchange", `{"linkId":"${$.linkid}","rewardType":1}`)
+        let options = taskUrl("exchange", `{"linkId":"${linkid}","rewardType":1}`)
         //  console.log(options)
         $.post(options, async (err, resp, data) => {
             try {
@@ -165,7 +165,7 @@ function Draw() {
 
 function getid() {
     return new Promise(async (resolve) => {
-        let options = taskUrl("redEnvelopeInteractHome", `{"linkId":"${$.linkid}","redEnvelopeId":"","inviter":"","helpType":""}`)
+        let options = taskUrl("redEnvelopeInteractHome", `{"linkId":"${linkid}","redEnvelopeId":"","inviter":"","helpType":""}`)
         $.get(options, async (err, resp, data) => {
             try {
                 if (err) {
@@ -204,7 +204,7 @@ function getid() {
 
 function help(rid, inviter, type, helpother) {
     return new Promise(async (resolve) => {
-        let options = taskUrl("openRedEnvelopeInteract", `{"linkId":"${$.linkid}","redEnvelopeId":"${rid}","inviter":"${inviter}","helpType":"${type}"}`)
+        let options = taskUrl("openRedEnvelopeInteract", `{"linkId":"${linkid}","redEnvelopeId":"${rid}","inviter":"${inviter}","helpType":"${type}"}`)
         $.get(options, async (err, resp, data) => {
             try {
                 if (err) {
@@ -239,7 +239,7 @@ function help(rid, inviter, type, helpother) {
 
 function open() {
     return new Promise(async (resolve) => {
-        let options = taskUrl("openRedEnvelopeInteract", `{"linkId":"${$.linkid}"}`)
+        let options = taskUrl("openRedEnvelopeInteract", `{"linkId":"${linkid}"}`)
         $.get(options, async (err, resp, data) => {
             try {
                 if (err) {
