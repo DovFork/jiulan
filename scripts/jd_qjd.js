@@ -199,16 +199,18 @@ function doHelp(groupCode, shareCode, activityId) {
                 'Accept-Language': 'zh-cn'
             }
         }, (err, resp, data) => {
-            data = JSON.parse(data.replace(/jsonp_\d*_\d*\(/, '').replace(/\);?/, ''))
-            let {helpToast} = data.data
-            let {respCode} = data.data
-            if (respCode === 'SG209') {
-                console.log(helpToast)
-                $.helpStatus = false;
-            } else {
-                console.log(helpToast)
-            }
+            if(data) {
+                data = JSON.parse(data.replace(/jsonp_\d*_\d*\(/, '').replace(/\);?/, ''))
+                let {helpToast} = data.data
+                let {respCode} = data.data
+                if (respCode === 'SG209') {
+                    console.log(helpToast)
+                    $.helpStatus = false;
+                } else {
+                    console.log(helpToast)
+                }
 
+            }
             resolve()
         })
     })
