@@ -21,7 +21,6 @@ cron "20 7,9,17,20 * * *" script-path=https://raw.githubusercontent.com/jiulan/p
  */
 const $ = new Env('汪汪乐园每日任务');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
-
 const notify = $.isNode() ? require('./sendNotify') : '';
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '';
@@ -149,7 +148,7 @@ message = ""
                     }
                 } else if (task.taskType === 'SHARE_INVITE') {
                     for (let j = 0; j < 5; j++) {
-                        let resp = await apTaskDrawAward(167, 'SHARE_INVITE');
+                        let resp = await apTaskDrawAward(261, 'SHARE_INVITE');
 
                         if (!resp.success) {
                             break
@@ -162,6 +161,9 @@ message = ""
                     await apDoTask2(task.id, task.taskType, task.taskSourceUrl);
                     $.log(`${task.taskTitle}|${task.taskShowTitle} 领取奖励`)
                     await apTaskDrawAward(task.id, task.taskType);
+                }
+                if (task.taskType === 'SHARE_INVITE') {
+                    $.yq_taskid = task.id
                 }
             }
         }
@@ -188,7 +190,7 @@ message = ""
             $.newinvitePinTaskList = [...($.invitePinTaskList || []), ...($.invitePin || [])]
             for (const invitePinTaskListKey of $.newinvitePinTaskList) {
                 $.log(`【京东账号${$.index}】${$.nickName || $.UserName} 助力 ${invitePinTaskListKey}`)
-                let resp = await getJoyBaseInfo(261, 1, invitePinTaskListKey);
+                let resp = await getJoyBaseInfo($.yq_taskid, 1, invitePinTaskListKey);
                 if (resp.success) {
                     if (resp.data.helpState === 1) {
                         $.log("助力成功！");
