@@ -128,16 +128,15 @@ function helpme(code) {
                 data = JSON.parse(data);
 
                 // console.log(data)
-                if (data.code == 1) {
+                if (data.code == 0) {
                     if (data.data.inviteStatus == 1) {
                         console.log(data.data.inviteStatus + "邀请成功")
 
                     } else if (data.data.inviteStatus == 0) {
-
                         console.log(data.data.inviteStatus + "邀请失败")
+                    }else {
+                        console.log("邀请过了  ")
                     }
-                }else if(data.code == 20001){
-                    console.log("邀请过了  ")
                 }else {
                     console.log("邀请失败 :",data)
                 }
@@ -174,8 +173,8 @@ function findInviterPin(){
 
                 if(data.code === 0 ){
                     if (!yqm){
-                        console.log(`未配置邀请码  默认使用第一个账号的邀请码\n`)
                         yqm = data.data.inviterPin
+                        console.log(`未配置邀请码  默认使用第一个账号的邀请码 ${yqm}\n`)
                     }
                     console.log(`京东账号${$.index} ${$.nickName || $.UserName}邀请码:`+data.data.inviterPin)
                 }
