@@ -939,8 +939,8 @@ async function getBuildInfo(body, buildList, type = true) {
                         await getUserInfo(false)
                         console.log(`升级建筑`)
                         console.log(`【${buildNmae}】当前等级：${buildList.dwLvl}`)
-                        console.log(`【${buildNmae}】升级需要${data.ddwNextLvlCostCoin}金币，保留升级需要的3倍${data.ddwNextLvlCostCoin * 3}金币，当前拥有${$.info.ddwCoinBalance}金币`)
-                        if(data.dwCanLvlUp > 0 && $.info.ddwCoinBalance >= (data.ddwNextLvlCostCoin * 3)) {
+                        console.log(`【${buildNmae}】升级需要${data.ddwNextLvlCostCoin}金币，保留升级需要的2倍${data.ddwNextLvlCostCoin * 2}金币，当前拥有${$.info.ddwCoinBalance}金币`)
+                        if(data.dwCanLvlUp > 0 && $.info.ddwCoinBalance >= (data.ddwNextLvlCostCoin * 2)) {
                             console.log(`【${buildNmae}】满足升级条件，开始升级`)
                             const body = `ddwCostCoin=${data.ddwNextLvlCostCoin}&strBuildIndex=${data.strBuildIndex}`
                             await $.wait(2000)
@@ -1483,73 +1483,12 @@ function showMsg() {
     });
 }
 
-function readShareCode() {
-    return new Promise(async resolve => {
-        $.get({url: `https://transfer.nz.lu/cfd`, timeout: 30 * 1000}, (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(JSON.stringify(err))
-                    console.log(`${$.name} readShareCode API请求失败，请检查网路重试`)
-                } else {
-                    if (data) {
-                        console.log(`\n随机取${randomCount}个码放到您固定的互助码后面(不影响已有固定互助)`)
-                        data = JSON.parse(data);
-                    }
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            } finally {
-                resolve(data);
-            }
-        })
-        await $.wait(10000);
-        resolve()
-    })
-}
-function uploadShareCode(code) {
-    return new Promise(async resolve => {
-        $.post({url: `https://transfer.nz.lu/upload/cfd?code=${code}&ptpin=${encodeURIComponent(encodeURIComponent($.UserName))}`, timeout: 30 * 1000}, (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(JSON.stringify(err))
-                    console.log(`${$.name} uploadShareCode API请求失败，请检查网路重试`)
-                } else {
-                    if (data) {
-                        if (data === 'OK') {
-                            console.log(`已自动提交助力码\n`)
-                        } else if (data === 'error') {
-                            console.log(`助力码格式错误，乱玩API是要被打屁屁的~\n`)
-                        } else if (data === 'full') {
-                            console.log(`车位已满，请等待下一班次\n`)
-                        } else if (data === 'exist') {
-                            console.log(`助力码已经提交过了~\n`)
-                        } else if (data === 'not in whitelist') {
-                            console.log(`提交助力码失败，此用户不在白名单中\n`)
-                        } else {
-                            console.log(`未知错误：${data}\n`)
-                        }
-                    }
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            } finally {
-                resolve(data);
-            }
-        })
-        await $.wait(10000);
-        resolve()
-    })
-}
+
 //格式化助力码
 function shareCodesFormat() {
     return new Promise(async resolve => {
         $.newShareCodes = []
-        const readShareCodeRes = await readShareCode();
-        if (readShareCodeRes && readShareCodeRes.code === 200) {
-            $.newShareCodes = [...new Set([...$.shareCodes, ...(readShareCodeRes.data || [])])];
-        } else {
-            $.newShareCodes = [...new Set([...$.shareCodes])];
-        }
+        $.newShareCodes = [...new Set([...$.shareCodes])];
         console.log(`您将要助力的好友${JSON.stringify($.newShareCodes)}`)
         resolve();
     })

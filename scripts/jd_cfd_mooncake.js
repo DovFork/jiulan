@@ -622,29 +622,6 @@ function showMsg() {
     });
 }
 
-function readShareCode() {
-    return new Promise(async resolve => {
-        $.get({url: `http://transfer.nz.lu/cfd`, timeout: 10000}, (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(JSON.stringify(err))
-                    console.log(`${$.name} readShareCode API请求失败，请检查网路重试`)
-                } else {
-                    if (data) {
-                        console.log(`\n随机取${randomCount}个码放到您固定的互助码后面(不影响已有固定互助)`)
-                        data = JSON.parse(data);
-                    }
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            } finally {
-                resolve(data);
-            }
-        })
-        await $.wait(10000);
-        resolve()
-    })
-}
 //格式化助力码
 function shareCodesFormat() {
     return new Promise(async resolve => {
