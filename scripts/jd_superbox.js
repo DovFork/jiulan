@@ -58,6 +58,7 @@ const JD_API_HOST = `https://api.m.jd.com/client.action`;
             console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
             console.log(`\n入口：app主页搜超级盒子\n`);
             await main()
+            await superboxSubBoxRewardPage()
         }
     };
     //去助力与开箱
@@ -87,6 +88,7 @@ const JD_API_HOST = `https://api.m.jd.com/client.action`;
                 await openBox({"linkId":"DQFdr1ttvWWzn0wsQ7JDZQ","encryptPin":""});
                 await $.wait(1000);
             }
+            await superboxSubBoxRewardPage()
         }
     }
 })()
@@ -108,7 +110,7 @@ async function main() {
             if (["BROWSE_SHOP"].includes($.oneTask.taskType) && $.oneTask.taskFinished === false){
                 await apTaskDetail({"taskId":$.oneTask.id,"taskType":$.oneTask.taskType,"channel":4,"linkId":"DQFdr1ttvWWzn0wsQ7JDZQ","encryptPin":"7pcfSWHrAG9MKu3RKLl127VL5L4aIE1sZ1eRRdphpl8"});
                 await $.wait(1000)
-                for (let y = 0; y < ($.doList.status.finishNeed-$.doList.status.userFinishedTimes); y++){
+                for (let y = 0; y < $.doList.taskItemList.length; y++){
                     $.startList = $.doList.taskItemList[y];
                     $.itemName = $.doList.taskItemList[y].itemName;
                     console.log(`去浏览${$.itemName}`)
@@ -120,6 +122,7 @@ async function main() {
     }else{
         console.log(`任务全部完成`)
     }
+
 }
 
 //活动主页
@@ -271,6 +274,32 @@ function openBox(body) {
                         console.log(`开箱成功应该获得了空气${JSON.stringify(data.data)}\n\n`)
                     }else{
                         console.log(`失败：${JSON.stringify(data)}\n\n`)
+                    }
+                }
+            } catch (e) {
+                $.logErr(e, resp);
+            } finally {
+                resolve();
+            }
+        })
+    })
+}
+//开盲盒
+function superboxSubBoxRewardPage() {
+    let body = {"linkId":"DQFdr1ttvWWzn0wsQ7JDZQ","encryptPin":""}
+    return new Promise((resolve) => {
+        $.get(taskGetUrl('superboxSubBoxRewardPage', body), (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} superboxOrdinaryLottery API请求失败，请检查网路重试`)
+                } else {
+                    data = JSON.parse(data);
+                    // console.log(JSON.stringify(data));
+                    if(data.success === true && data.code === 0){
+                        if (data.data.filter(x => x.rewardType != 2).length >0){
+                            $.msg($.name, `‼️‼️‼️‼️`, `京东账号${$.index} ${$.nickName || $.UserName}\n京东盒子开出VIP专属奖励 快去看看吧\n活动入口：京东APP-搜索-超级盒子` );
+                        }
                     }
                 }
             } catch (e) {
