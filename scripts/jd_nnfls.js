@@ -60,9 +60,6 @@ if ($.isNode()) {
         await drawUserTask();
     }
     shareCodes = shareCodes.filter(code => code)
-    const author = Math.random() > 0.5 ? 'shufflewzc' : 'shufflewzc'
-    await getShareCode('nnfls.json',author,3,true)
-    shareCodes = [...new Set([...shareCodes, ...($.shareCode || [])])];
     if (shareCodes.length > 0) {
         console.log(`\n开始互助\n`);
     }
@@ -89,36 +86,6 @@ if ($.isNode()) {
 
 })().catch((e) => { $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '') }).finally(() => { $.done(); })
 
-function getShareCode(name,author = 'shufflewzc',num = -1,shuffle=false) {
-    return new Promise(resolve => {
-        $.get({
-            url: `https://raw.fastgit.org/${author}/updateTeam/main/shareCodes/${name}`,
-            headers: {
-                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-            }
-        }, async (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(`${JSON.stringify(err)}`);
-                    console.log(`${$.name} API请求失败，请检查网路重试`);
-                } else {
-                    console.log(`优先账号内部互助，有剩余助力次数再帮作者助力`);
-                    $.shareCode = JSON.parse(data) || []
-                    if (shuffle) {
-                        $.shareCode = $.shareCode.sort(() => 0.5 - Math.random())
-                    }
-                    if (num != -1) {
-                        $.shareCode = $.shareCode.slice(0,num)
-                    }
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            } finally {
-                resolve();
-            }
-        })
-    })
-}
 
 async function help(sharecode) {
     console.log(`${$.UserName} 去助力 ${sharecode}`)
