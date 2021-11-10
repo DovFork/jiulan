@@ -114,7 +114,7 @@ async function JD818() {
         await doHotProducttask();//做热销产品任务
         await doBrandTask();//做品牌手机任务
         await doBrowseshopTask();//逛好货街，做任务
-        // await doHelp();
+        await doHelp();
         await myRank();//领取往期排名奖励
         await getListRank();
         await getListIntegral();
@@ -589,7 +589,7 @@ function saveJbean(date) {
 }
 async function doHelp() {
     console.log(`\n开始助力好友`);
-    for (let item of $.newShareCodes) {
+    for (let item of  $.temp) {
         if (!item) continue;
         const helpRes = await toHelp(item.trim());
         if (helpRes.data.status === 5) {
