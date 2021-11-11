@@ -84,6 +84,16 @@ let allMessage = '';
                 }
             }
         }
+
+    }
+    for (let i = 0; i < cookiesArr.length; i++) {
+        cookie = cookiesArr[i];
+        console.log("测试抽奖")
+        for (let j = 0; j < 10; j++) {
+            await doInteractiveAssignment("test", "3pp3mvzmgcFm7mvU3S1wZihNKi1H","acexinpin0823", "3Qia2BF8oxZWEFsNdAEAuZsTXHqA", "","",{"exchangeNum":1})
+        }
+        for (let j = 0; j < 10; j++) {
+            await doInteractiveAssignment("test", "3pp3mvzmgcFm7mvU3S1wZihNKi1H","acexinpin0823", "2qZXV5kAqBJjkJmYi8C2874WyHxj", "","",{"exchangeNum":1})        }
     }
 })()
     .catch((e) => {
@@ -122,8 +132,9 @@ async function getInteractionHomeInfo() {
     })
 }
 async function queryInteractiveInfo(encryptProjectId, sourceCode) {
+    console.log("encryptProjectId:   ",encryptProjectId)
     return new Promise(async (resolve) => {
-        $.post(taskUrl("queryInteractiveInfo", {"encryptProjectId":encryptProjectId,"sourceCode":sourceCode,"ext":{}}), async (err, resp, data) => {
+        $.post(taskUrl("queryInteractiveInfo", {"encryptProjectId":encryptProjectId,"sourceCode":sourceCode,"ext":{"couponUsableGetSwitch":"1"}}), async (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -222,9 +233,9 @@ async function qryViewkitCallbackResult(encryptProjectId, encryptAssignmentId, i
         })
     })
 }
-function doInteractiveAssignment(extraType, encryptProjectId, sourceCode, encryptAssignmentId, itemId, actionType = "") {
+function doInteractiveAssignment(extraType, encryptProjectId, sourceCode, encryptAssignmentId, itemId, actionType = "",ext) {
     return new Promise((resolve) => {
-        $.post(taskUrl("doInteractiveAssignment", {"encryptProjectId":encryptProjectId,"encryptAssignmentId":encryptAssignmentId,"sourceCode":sourceCode,"itemId":itemId,"actionType":actionType,"completionFlag":"","ext":{}}), (err, resp, data) => {
+        $.post(taskUrl("doInteractiveAssignment", {"encryptProjectId":encryptProjectId,"encryptAssignmentId":encryptAssignmentId,"sourceCode":sourceCode,"itemId":itemId,"actionType":actionType,"completionFlag":"","ext":ext?ext:{}}), (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -253,6 +264,13 @@ function doInteractiveAssignment(extraType, encryptProjectId, sourceCode, encryp
                             if (data.assignmentInfo.completionCnt === data.assignmentInfo.maxTimes) {
                                 $.complete = true
                                 console.log(`完成成功：获得${data.rewardsInfo.successRewards[$.type][0] ? `${data.rewardsInfo.successRewards[$.type][0].quantity}${data.rewardsInfo.successRewards[$.type][0].rewardName}` : `${data.rewardsInfo.successRewards[$.type].quantityDetails[0].quantity}${data.rewardsInfo.successRewards[$.type].quantityDetails[0].rewardName}`}`)
+                            }
+                        }else  if (extraType === "test"){
+                            console.log("兑换")
+                            if (data.subCode === 0) {
+                                console.log("兑换成功")
+                            }else {
+                                console.log("data",data)
                             }
                         }
                     }
@@ -304,6 +322,7 @@ async function getInteractionInfo(type = true) {
                             }
                             data = await getInteractionInfo(false)
                             if (data.result.hasFinalLottery === 0) {
+                                console.log(`data`,data)
                                 let num = 0
                                 for (let key of Object.keys(data.result.taskPoolInfo.taskRecord)) {
                                     let vo = data.result.taskPoolInfo.taskRecord[key]
