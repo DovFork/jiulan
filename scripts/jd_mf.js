@@ -20,6 +20,8 @@ let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭�
 let cookiesArr = [], cookie = '', message;
 let uuid
 $.shareCodes = []
+//抽奖继续执行
+let execute = true;
 let hotInfo = {}
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
@@ -89,11 +91,13 @@ let allMessage = '';
     for (let i = 0; i < cookiesArr.length; i++) {
         cookie = cookiesArr[i];
         console.log("测试抽奖")
+        execute = true;
         for (let j = 0; j < 10; j++) {
             await doInteractiveAssignment("test", "3pp3mvzmgcFm7mvU3S1wZihNKi1H","acexinpin0823", "3Qia2BF8oxZWEFsNdAEAuZsTXHqA", "","",{"exchangeNum":1})
         }
         for (let j = 0; j < 10; j++) {
-            await doInteractiveAssignment("test", "3pp3mvzmgcFm7mvU3S1wZihNKi1H","acexinpin0823", "2qZXV5kAqBJjkJmYi8C2874WyHxj", "","",{"exchangeNum":1})        }
+            await doInteractiveAssignment("test", "3pp3mvzmgcFm7mvU3S1wZihNKi1H","acexinpin0823", "2qZXV5kAqBJjkJmYi8C2874WyHxj", "","",{"exchangeNum":1})
+        }
     }
 })()
     .catch((e) => {
@@ -270,6 +274,7 @@ function doInteractiveAssignment(extraType, encryptProjectId, sourceCode, encryp
                             if (data.subCode === 0) {
                                 console.log("兑换成功")
                             }else {
+                                execute = false
                                 console.log("data",data)
                             }
                         }
@@ -322,18 +327,7 @@ async function getInteractionInfo(type = true) {
                             }
                             data = await getInteractionInfo(false)
                             if (data.result.hasFinalLottery === 0) {
-                                console.log(`data`,data)
-                                let num = 0
-                                for (let key of Object.keys(data.result.taskPoolInfo.taskRecord)) {
-                                    let vo = data.result.taskPoolInfo.taskRecord[key]
-                                    num += vo
-                                }
-                                if (num >= 9) {
-                                    console.log(`共找到${num}个魔方，可开启礼盒`)
-                                    await getNewFinalLotteryInfo()
-                                } else {
-                                    console.log(`共找到${num}个魔方，不可开启礼盒`)
-                                }
+
                             } else {
                                 console.log(`已开启礼盒`)
                             }
