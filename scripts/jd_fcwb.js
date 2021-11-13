@@ -77,7 +77,7 @@ if ($.isNode()) {
         console.log('当前正在通关'+curRound+'关\n')
         for (let chunk of data[0].chunks.filter(e => e.state !==1)) {
             await wb(curRound,chunk.colIdx,chunk.rowIdx)
-            await $.wait(1000)
+            await $.wait(3000)
         }
     }
 
