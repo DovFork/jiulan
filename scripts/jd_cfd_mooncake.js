@@ -632,8 +632,8 @@ function shareCodesFormat() {
     return new Promise(async resolve => {
         $.newShareCodes = []
         const readShareCodeRes = await readShareCode();
-        if (readShareCodeRes && readShareCodeRes.code === 200) {
-          $.newShareCodes = [...new Set([...$.shareCodes, ...$.strMyShareIds, ...(readShareCodeRes.data || [])])];
+        if (readShareCodeRes) {
+          $.newShareCodes = [...new Set([...$.shareCodes, ...$.strMyShareIds, ...(readShareCodeRes || [])])];
         } else {
           $.newShareCodes = [...new Set([...$.shareCodes, ...$.strMyShareIds])];
         }
