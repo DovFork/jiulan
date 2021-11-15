@@ -1,27 +1,27 @@
 /*
-京喜财富岛合成月饼
-cron 5 * * * * jd_cfd_mooncake.js
+京喜财富岛合成生鲜
+cron 45 * * * * jd_cfd_fresh.js
 更新时间：2021-9-11
-活动入口：京喜APP-我的-京喜财富岛
+活动入口：微信京喜-我的-京喜财富岛
 
 已支持IOS双京东账号,Node.js支持N个京东账号
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
 ============Quantumultx===============
 [task_local]
-#京喜财富岛合成月饼
-5 * * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfd_mooncake.js, tag=京喜财富岛合成月饼, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
+#京喜财富岛合成生鲜
+45 * * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfd_fresh.js, tag=京喜财富岛合成生鲜, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "5 * * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfd_mooncake.js,tag=京喜财富岛合成月饼
+cron "45 * * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfd_fresh.js,tag=京喜财富岛合成生鲜
 
 ===============Surge=================
-京喜财富岛合成月饼 = type=cron,cronexp="5 * * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfd_mooncake.js
+京喜财富岛合成生鲜 = type=cron,cronexp="45 * * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfd_fresh.js
 
 ============小火箭=========
-京喜财富岛合成月饼 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfd_mooncake.js, cronexpr="5 * * * *", timeout=3600, enable=true
+京喜财富岛合成生鲜 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_cfd_fresh.js, cronexpr="45 * * * *", timeout=3600, enable=true
  */
-const $ = new Env("京喜财富岛合成月饼");
+const $ = new Env("京喜财富岛合成生鲜");
 const JD_API_HOST = "https://m.jingxi.com/";
 const notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require("./jdCookie.js") : "";
@@ -51,7 +51,7 @@ if ($.isNode()) {
     $.CryptoJS = $.isNode() ? require('crypto-js') : CryptoJS;
     await requestAlgo();
     await $.wait(1000)
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i];
             $.cookie = cookie;
@@ -78,31 +78,6 @@ if ($.isNode()) {
             await $.wait(2000);
         }
     }
-    $.strMyShareIds = []
-    await shareCodesFormat()
-    for (let i = 0; i < cookiesArr.length; i++) {
-        cookie = cookiesArr[i];
-        $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-        $.canHelp = true
-        UA = UAInfo[$.UserName]
-        if ($.newShareCodes && $.newShareCodes.length) {
-            console.log(`\n开始互助\n`);
-            for (let j = 0; j < $.newShareCodes.length && $.canHelp; j++) {
-                console.log(`账号${$.UserName} 去助力 ${$.newShareCodes[j]}`)
-                $.delcode = false
-                await helpByStage($.newShareCodes[j])
-                await $.wait(2000)
-                if ($.delcode) {
-                    $.newShareCodes.splice(j, 1)
-                    j--
-                    continue
-                }
-            }
-        } else {
-            break
-        }
-    }
-    await showMsg();
 })()
     .catch((e) => $.logErr(e))
     .finally(() => $.done());
@@ -128,14 +103,11 @@ async function cfd() {
         await $.wait(2000)
         await composePearlState(4)
 
-        //助力奖励
-        await $.wait(2000)
-        await composePearlState(2)
 
-        //合成月饼
+        //合成生鲜
         let count = $.isNode() ? (process.env.JD_CFD_RUNNUM ? process.env.JD_CFD_RUNNUM * 1 : Math.floor((Math.random() * 2)) + 3) : ($.getdata('JD_CFD_RUNNUM') ? $.getdata('JD_CFD_RUNNUM') * 1 : Math.floor((Math.random() * 2)) + 3);
-        console.log(`\n合成月饼`)
-        console.log(`合成月饼运行次数为：${count}\n`)
+        console.log(`\n合成生鲜`)
+        console.log(`合成生鲜运行次数为：${count}\n`)
         let num = 0
         do {
             await $.wait(2000)
@@ -148,10 +120,10 @@ async function cfd() {
     }
 }
 
-// 合成月饼
+// 合成生鲜
 async function composePearlState(type) {
     return new Promise(async (resolve) => {
-        $.get(taskUrl(`user/ComposePearlState`, `__t=${Date.now()}&dwGetType=0`), async (err, resp, data) => {
+        $.get(taskUrl(`user/ComposePinPinPearlState`, `__t=${Date.now()}&dwGetType=0`), async (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -186,12 +158,12 @@ async function composePearlState(type) {
                         case 3:
                             data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
                             if (data.iRet === 0) {
-                                console.log(`当前已合成${data.dwCurProgress}颗月饼，总计获得${data.ddwVirHb / 100}元红包`)
+                                console.log(`当前已合成${data.dwCurProgress}颗生鲜，总计获得${data.ddwVirHb  }个金豆子`)
                                 if (data.strDT) {
                                     // let num = Math.ceil(Math.random() * 12 + 12)
                                     let num = data.PearlList.length
                                     let div = Math.ceil(Math.random() * 4 + 2)
-                                    console.log(`合成月饼：模拟操作${num}次`)
+                                    console.log(`合成生鲜：模拟操作${num}次`)
                                     for (let v = 0; v < num; v++) {
                                         console.log(`模拟操作进度：${v + 1}/${num}`)
                                         let beacon = data.PearlList[0]
@@ -218,13 +190,13 @@ async function composePearlState(type) {
                                     let strLT = data.oPT[data.ddwCurTime % data.oPT.length]
                                     let res = await composePearlAddProcess(data.strDT, strLT)
                                     if (res.iRet === 0) {
-                                        console.log(`\n合成月饼成功：获得${res.ddwAwardHb / 100}元红包\n`)
+                                        console.log(`\n合成生鲜成功：获得${res.ddwAwardHb }个金豆子\n`)
                                         if (res.ddwAwardHb === 0) {
                                             $.stop = true
-                                            console.log(`合成月饼没有奖励，停止运行\n`)
+                                            console.log(`合成生鲜没有奖励，停止运行\n`)
                                         }
                                     } else {
-                                        console.log(`\n合成月饼失败：${res.sErrMsg}\n`)
+                                        console.log(`\n合成生鲜失败：${res.sErrMsg}\n`)
                                     }
                                 } else {
                                     console.log(`今日已完成\n`)
@@ -275,7 +247,7 @@ function realTmReport(strMyShareId) {
 }
 function composePearlAddProcess(strDT, strLT) {
     return new Promise((resolve) => {
-        $.get(taskUrl(`user/ComposePearlAddProcess`, `strBT=${strDT}&strLT=${strLT}`), (err, resp, data) => {
+        $.get(taskUrl(`user/ComposePearlAddProcess`, `strBT=${strDT}&strLT=${strLT}&dwIsPP=1`), (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -342,7 +314,7 @@ function composePearlAward(strDT, type, size) {
                 } else {
                     data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
                     if (data.iRet === 0) {
-                        console.log(`模拟操作中奖：获得${data.ddwAwardHb / 100}元红包，总计获得${data.ddwVirHb / 100}元红包`)
+                        console.log(`模拟操作中奖：获得${data.ddwAwardHb }个金豆子，总计获得${data.ddwVirHb }个金豆子`)
                     } else {
                         console.log(`模拟操作未中奖：${data.sErrMsg}`)
                     }
@@ -367,7 +339,7 @@ function pearlHelpDraw(ddwSeasonStartTm, dwUserId) {
                 } else {
                     data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
                     if (data.iRet === 0) {
-                        console.log(`领取助力奖励成功：获得${data.StagePrizeInfo.ddwAwardHb / 100}元红包，总计获得${data.StagePrizeInfo.ddwVirHb / 100}元红包`)
+                        console.log(`领取助力奖励成功：获得${data.StagePrizeInfo.ddwAwardHb  }个金豆子，总计获得${data.StagePrizeInfo.ddwVirHb  }个金豆子`)
                     } else {
                         console.log(`领取助力奖励失败：${data.sErrMsg}`)
                     }
@@ -579,7 +551,7 @@ function biz(contents){
 function taskUrl(function_path, body = '', dwEnv = 7) {
     let url = `${JD_API_HOST}jxbfd/${function_path}?strZone=jxbfd&bizCode=jxbfd&source=jxbfd&dwEnv=${dwEnv}&_cfd_t=${Date.now()}&ptag=7155.9.47${body ? `&${body}` : ''}`;
     url += `&_stk=${getStk(url)}`;
-    url += `&_ste=1&h5st=${decrypt(Date.now(), '', '', url)}&_=${Date.now() + 2}&sceneval=2&g_login_type=1&callback=jsonpCBK${String.fromCharCode(Math.floor(Math.random() * 26) + "A".charCodeAt(0))}&g_ty=ls`;
+    url += `&_ste=1&h5st=${decrypt(Date.now(), '', '', url)}&_=${Date.now() + 2}&sceneval=2&g_login_type=0&dwIsPP=1&callback=jsonpCBK${String.fromCharCode(Math.floor(Math.random() * 26) + "A".charCodeAt(0))}&g_ty=ls`;
     return {
         url,
         headers: {
