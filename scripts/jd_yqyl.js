@@ -50,7 +50,20 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
         return;
     }
-
+    let authorCode = "";
+    if(helpAuthorFlag){
+        try{
+            helpAuthorInfo = await getAuthorShareCode('https://ghproxy.com/https://raw.githubusercontent.com/jiulan/helpRepository/main/json/yqyl.json');
+        }catch (e) {}
+        if(!helpAuthorInfo){
+            helpAuthorInfo = [];
+        }
+        if (helpAuthorInfo.length > 0){
+            let authorList = getRandomArrayElements(helpAuthorInfo,1);
+            authorCode = authorList[0];
+            await $.wait(1000)
+        }
+    }
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i];
@@ -70,20 +83,15 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
                 continue
             }
             if(helpAuthorFlag){
-                try{
-                    helpAuthorInfo = await getAuthorShareCode('https://ghproxy.com/https://raw.githubusercontent.com/jiulan/helpRepository/main/json/yqyl.json');
-                }catch (e) {}
-                if(!helpAuthorInfo){
-                    helpAuthorInfo = [];
-                }
-                if (helpAuthorInfo.length > 0){
-                    let authorList = getRandomArrayElements(helpAuthorInfo,1);
-                    let authorCode = authorList[0];
+                if (cookiesArr.length < 10){
+                    console.log(`cookie数量小于十,活动意义不大\n`)
+                    console.log(`作者维护不易，默认给作者助力  感谢 `)
+                    await helpme(authorCode)
+                }else {
                     console.log(`${$.UserName}给作者助力一次`+authorCode)
                     await helpme(authorCode)
 
                     helpAuthorFlag = false;
-                    await $.wait(1000)
                 }
 
             }
