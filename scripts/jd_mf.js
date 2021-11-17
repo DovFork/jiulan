@@ -21,7 +21,7 @@ let cookiesArr = [], cookie = '', message;
 let uuid
 $.shareCodes = []
 //抽奖继续执行
-let execute = true;
+$.execute = true;
 let hotInfo = {}
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
@@ -90,12 +90,12 @@ let allMessage = '';
     }
     for (let i = 0; i < cookiesArr.length; i++) {
         cookie = cookiesArr[i];
-        console.log("测试抽奖")
-        execute = true;
-        for (let j = 0; j < 10; j++) {
+        console.log(`【京东账号${$.index}（${$.UserName}）测试抽奖`)
+        $.execute = true;
+        for (let j = 0; j < 10 && $.execute; j++) {
             await doInteractiveAssignment("test", "3pp3mvzmgcFm7mvU3S1wZihNKi1H","acexinpin0823", "3Qia2BF8oxZWEFsNdAEAuZsTXHqA", "","",{"exchangeNum":1})
         }
-        for (let j = 0; j < 10; j++) {
+        for (let j = 0; j < 10 && $.execute; j++) {
             await doInteractiveAssignment("test", "3pp3mvzmgcFm7mvU3S1wZihNKi1H","acexinpin0823", "2qZXV5kAqBJjkJmYi8C2874WyHxj", "","",{"exchangeNum":1})
         }
     }
@@ -274,7 +274,7 @@ function doInteractiveAssignment(extraType, encryptProjectId, sourceCode, encryp
                             if (data.subCode === 0) {
                                 console.log("兑换成功")
                             }else {
-                                execute = false
+                                $.execute = false
                                 console.log("data",data)
                             }
                         }
