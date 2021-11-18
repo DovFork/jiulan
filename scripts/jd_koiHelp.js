@@ -47,7 +47,7 @@ let shareCodes = [];
         }else if (data?.data?.code == 20001) {//红包活动正在进行，可拆
             console.log(`互助码: ${data.data.result.redpacketInfo.id}`);
             shareCodes.push(data.data.result.redpacketInfo.id);
-            await submitCode(data.data.result.redpacketInfo.id);
+            // await submitCode(data.data.result.redpacketInfo.id);
         }
         await $.wait(2000)
     }
@@ -132,37 +132,6 @@ function random(min, max) {
     return `${num}`;
 }
 
-function submitCode(shareCode) {
-    if (!shareCode || shareCode == undefined || shareCode.length<=0 ) {return;}
-    return new Promise(async resolve => {
-        $.get({url: `http://www.helpu.cf/jdcodes/submit.php?code=${shareCode}&type=koi&user=${$.UserName}`, timeout: 10000}, (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(`${JSON.stringify(err)}`)
-                    console.log(`${$.name} 提交助力码 API请求失败，请检查网路重试`)
-                } else {
-                    if (data) {
-                        //console.log(`随机取个${randomCount}码放到您固定的互助码后面(不影响已有固定互助)`)
-                        data = JSON.parse(data);
-                        if (data.code === 300) {
-                            $.needSubmit = false;
-                            console.log("锦鲤红包，互助码已提交");
-                        }else if (data.code === 200) {
-                            $.needSubmit = false;
-                            console.log("锦鲤红包，互助码提交成功");
-                        }
-                    }
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            } finally {
-                resolve(data || {"code":500});
-            }
-        })
-        await $.wait(10000);
-        resolve({"code":500})
-    })
-}
 function readShareCode() {
     return new Promise(async resolve => {
         $.get({url: `https://ghproxy.com/https://raw.githubusercontent.com/jiulan/helpRepository/main/json/jd_red.json`, 'timeout': 10000}, (err, resp, data) => {
