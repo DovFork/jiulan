@@ -90,6 +90,8 @@ let allMessage = '';
     }
     for (let i = 0; i < cookiesArr.length; i++) {
         cookie = cookiesArr[i];
+        $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+        $.index = i + 1;
         console.log(`【京东账号${$.index}（${$.UserName}）测试抽奖`)
         $.execute = true;
         for (let j = 0; j < 10 && $.execute; j++) {
@@ -271,7 +273,7 @@ function doInteractiveAssignment(extraType, encryptProjectId, sourceCode, encryp
                             }
                         }else  if (extraType === "test"){
                             console.log("兑换")
-                            if (data.subCode === 0) {
+                            if (data.subCode === '0') {
                                 console.log("兑换成功")
                             }else {
                                 $.execute = false
