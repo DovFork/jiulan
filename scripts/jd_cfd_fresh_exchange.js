@@ -58,6 +58,7 @@ if ($.isNode()) {
     $.CryptoJS = $.isNode() ? require('crypto-js') : CryptoJS;
     await requestAlgo();
     await $.wait(500)
+    console.log(`变量JD_CFD_FRESH_DDW_VIRHB  可选值  5 10 20 30 50 100 (默认100)\n`)
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i];
@@ -81,10 +82,9 @@ if ($.isNode()) {
             $.allTask = []
             $.info = {}
             token = await getJxToken()
-            if (conditionList && conditionList.length===0){
-                console.log(`尝试获取兑换参数`)
-                await exchangePinPinPearlState()
-            }
+            conditionList = []
+            console.log(`尝试获取兑换参数`)
+            await exchangePinPinPearlState()
             if (conditionList.length===0){
                 console.log(`未获取到兑换参数 下个`)
                 continue
@@ -94,8 +94,13 @@ if ($.isNode()) {
             if (condition){
                 await exchangePinPinPearl(condition.ddwVirHb,condition.strPool);
             }else {
-                console.log(`瞎填锤你  重填\n`)
-                console.log(`变量JD_CFD_FRESH_DDW_VIRHB  可选值  5 10 20 30 50 100 (默认100)\n`)
+                console.log(`未获取到指定变量对应参数  默认提现最大兑换额度\n`)
+                let number = Math.max.apply(Math,conditionList.map(item => {
+                    return item.ddwVirHb;
+                }));
+
+                let condition = conditionList.filter(e => e.ddwVirHb == number)[0];
+                await exchangePinPinPearl(condition.ddwVirHb,condition.strPool);
             }
             // await $.wait(500);
         }
@@ -147,8 +152,9 @@ async function exchangePinPinPearlState() {
                         data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
                         if (data.iRet === 0) {
                             console.log(`获取兑换参数成功`);
-                            for (var o in data.exchangeInfo.prizeInfo) {
-                                let prizeInfoElement = data.exchangeInfo.prizeInfo[o];
+                            let filterData = data.exchangeInfo.prizeInfo.filter(e => e.dwState === 0);
+                            for (var o in filterData) {
+                                let prizeInfoElement = filterData[o];
                                 conditionList.push({
                                         "strPool": prizeInfoElement.strPool,
                                         "ddwVirHb":prizeInfoElement.ddwVirHb
