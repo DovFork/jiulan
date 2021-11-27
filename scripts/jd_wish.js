@@ -1,9 +1,9 @@
 /*
 众筹许愿池
 活动入口：京东-京东众筹-众筹许愿池
-更新时间：2021-11-18
+更新时间：2021-11-27
 脚本兼容: QuantumultX, Surge,Loon, JSBox, Node.js
-更新地址  https://github.com/he1pu/JDHelp/blob/main/jd_wish.js
+更新地址  https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_wish.js
 =================================Quantumultx=========================
 [task_local]
 #众筹许愿池
@@ -24,8 +24,8 @@ let message = '', allMessage = '';
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '';
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
-let appIdArr = ['1E1NXxq0', '1FFRWxaY', '1FFVQyqw', '1FFdSxqw'];
-let appNameArr = ['众筹许愿池', '荣耀钞能力', '1111点心动', '焕新带电生活'];
+let appIdArr = ['1E1NXxq0', '1FFVQyqw'];
+let appNameArr = ['众筹许愿池', '1111点心动'];
 let appId, appName;
 $.shareCode = [];
 if ($.isNode()) {
