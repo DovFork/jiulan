@@ -28,6 +28,7 @@ let exjxbeans = false;
 if (process.env.exjxbeans) {
     exjxbeans = process.env.exjxbeans;
 }
+$.expirebeans = 0;
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
@@ -80,18 +81,18 @@ async function domain() {
     beans = await queryexpirebeans();
     if (beans.ret === 0) {
         beans.expirejingdou.map(item => {
-            expirebeans += item.expireamount;
+            $.expirebeans += item.expireamount;
         });
     }
     if (exjxbeans) {
-        if (expirebeans) {
+        if ($.expirebeans) {
             //为防止异常故障，每次最多兑换1000喜豆！
-            if (expirebeans < maxexchange) {
-                console.log(`您有${expirebeans}个京豆将在7天内过期,去执行兑换`);
-                let jxbeans = await exchangejxbeans(expirebeans);
+            if ($.expirebeans < maxexchange) {
+                console.log(`您有${$.expirebeans}个京豆将在7天内过期,去执行兑换`);
+                let jxbeans = await exchangejxbeans($.expirebeans);
                 if (jxbeans) {
-                    console.log(`成功兑换喜豆${expirebeans}！`);
-                    message += `\n【京东账号${$.index}】${$.nickName || $.UserName}\n成功兑换喜豆${expirebeans}！`
+                    console.log(`成功兑换喜豆${$.expirebeans}！`);
+                    message += `\n【京东账号${$.index}】${$.nickName || $.UserName}\n成功兑换喜豆${$.expirebeans}！`
                 }
             } else {
                 console.log(`默认每次最多兑换${maxexchange}豆子`)
