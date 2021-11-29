@@ -2,7 +2,7 @@
 东东世界
 入口 https://3.cn/102TmB-4K
 活动时间：
-更新时间  https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_ddworld.js
+更新时间  https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_ddworld.js
 脚本兼容: QuantumultX, Surge,Loon, JSBox, Node.js
 =================================Quantumultx=========================
 [task_local]
@@ -14,6 +14,24 @@ cron "17 10 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus
 ===================================Surge================================
 东东世界 = type=cron,cronexp="17 10 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddword.js
 ====================================小火箭=============================
+东东世界 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddword.js, cronexpr="17 10 * * *", timeout=3600, enable=true
+ */
+/*
+东东世界
+活动入口：https://3.cn/102TmB-4K
+https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_ddworld.js
+已支持IOS双京东账号,Node.js支持N个京东账号
+脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
+============Quantumultx===============
+[task_local]
+#东东世界
+17 10 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddword.js, tag=东东世界, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
+================Loon==============
+[Script]
+cron "17 10 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddword.js,tag=东东世界
+===============Surge=================
+东东世界 = type=cron,cronexp="17 10 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddword.js
+============小火箭=========
 东东世界 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddword.js, cronexpr="17 10 * * *", timeout=3600, enable=true
  */
 const $ = new Env('东东世界');
@@ -48,6 +66,7 @@ let tokenInfo = {}, hotInfo = {}
             $.isLogin = true;
             $.nickName = '';
             message = '';
+            $.hotFlag = false;
             await TotalBean();
             console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
             if (!$.isLogin) {
@@ -65,18 +84,8 @@ let tokenInfo = {}, hotInfo = {}
             hotInfo[$.UserName] = $.hot
         }
     }
-    let res = await getAuthorShareCode('https://raw.githubusercontent.com/Aaron-lv/updateTeam/master/shareCodes/ddworld.json')
-    if (!res) {
-        $.http.get({url: 'https://purge.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/ddworld.json'}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
-        await $.wait(1000)
-        res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/ddworld.json')
-    }
-    let res2 = await getAuthorShareCode('https://raw.githubusercontent.com/zero205/updateTeam/main/shareCodes/ddworld.json')
-    if (!res2) {
-        await $.wait(1000)
-        res2 = await getAuthorShareCode('https://raw.fastgit.org/zero205/updateTeam/main/shareCodes/ddworld.json')
-    }
-    $.shareCodes = [...$.shareCodes, ...[...(res || []), ...(res2 || [])].sort(() => 0.5 - Math.random())]
+    let res = []
+    $.shareCodes = [...$.shareCodes, ...(res || [])]
     for (let i = 0; i < cookiesArr.length; i++) {
         cookie = cookiesArr[i];
         $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
@@ -104,6 +113,13 @@ let tokenInfo = {}, hotInfo = {}
             }
         }
     }
+    await $.wait(2500);
+    for (let i = 0; i < cookiesArr.length; i++) {
+        $.UserName = decodeURIComponent(cookiesArr[i].match(/pt_pin=([^; ]+)(?=;?)/) && cookiesArr[i].match(/pt_pin=([^; ]+)(?=;?)/)[1])
+        console.log(`\n\n**********账号${$.UserName}开始兑换**********`)
+        await exchange();
+        await $.wait(2000);
+    }
 })()
     .catch((e) => {
         $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
@@ -119,6 +135,92 @@ async function jdWorld() {
     await get_user_info()
     if ($.hot) return
     await get_task()
+}
+//兑换
+async function exchange() {
+    if ($.token2 && $.access_token) {
+        await task('get_exchange');
+        if (!$.hotFlag) {
+            if ($.exchangeList) {
+                for (const vo of $.exchangeList.reverse()) {
+                    $.log(`去兑换：${vo.name}`)
+                    await taskExchangePost('do_exchange', `id=${vo.id}`);
+                }
+            } else {
+                $.log("没有获取到兑换列表！")
+            }
+        } else {
+            $.log("风险用户，快去买买买吧！！！")
+        }
+
+    } else {
+        $.log('获取Token失败')
+    }
+}
+
+async function task(function_id, body) {
+    return new Promise(async resolve => {
+        $.get(taskUrl(function_id, body), async (err, resp, data) => {
+            try {
+                if (data) {
+                    data = JSON.parse(data);
+                    switch (function_id) {
+                        case 'get_exchange':
+                            $.exchangeList = data;
+                            if (data.status_code === 403) {
+                                $.hotFlag = true;
+                            }
+                            break;
+                        default:
+                            $.log(JSON.stringify(data))
+                            break;
+                    }
+                } else {
+                    $.log(JSON.stringify(data))
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve();
+            }
+        })
+    })
+}
+
+function taskExchangePost(function_id, body) {
+    return new Promise(async resolve => {
+        $.post(taskPostUrl(function_id, body), async (err, resp, data) => {
+            try {
+                if (data) {
+                    data = JSON.parse(data);
+                    if (data) {
+                        switch (function_id) {
+                            case 'jd-user-info':
+                                $.accessToken = data.access_token;
+                                $.tokenType = data.token_type;
+                                break;
+                            case 'do_exchange':
+                                if (data.prize) {
+                                    console.log(`兑换成功：数量${data.prize.setting.beans_count}`)
+                                } else {
+                                    console.log(JSON.stringify(data))
+                                }
+                                break;
+                            default:
+                                $.log(JSON.stringify(data))
+                                break;
+                        }
+                    } else {
+                        $.log(JSON.stringify(data))
+                    }
+                }
+            } catch (error) {
+                $.log(error)
+            } finally {
+                resolve();
+            }
+        })
+    })
 }
 
 // 获得IsvToken
@@ -369,38 +471,6 @@ function taskPostUrl(functionId, body = '', IsvToken = '') {
     }
 }
 
-function getAuthorShareCode(url) {
-    return new Promise(async resolve => {
-        const options = {
-            url: `${url}?${new Date()}`, "timeout": 10000, headers: {
-                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-            }
-        };
-        if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
-            const tunnel = require("tunnel");
-            const agent = {
-                https: tunnel.httpsOverHttp({
-                    proxy: {
-                        host: process.env.TG_PROXY_HOST,
-                        port: process.env.TG_PROXY_PORT * 1
-                    }
-                })
-            }
-            Object.assign(options, { agent })
-        }
-        $.get(options, async (err, resp, data) => {
-            try {
-                resolve(JSON.parse(data))
-            } catch (e) {
-                // $.logErr(e, resp)
-            } finally {
-                resolve();
-            }
-        })
-        await $.wait(10000)
-        resolve();
-    })
-}
 
 function TotalBean() {
     return new Promise(async resolve => {
