@@ -7,14 +7,14 @@
 =================================Quantumultx=========================
 [task_local]
 #东东世界
-17 10 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddword.js, tag=东东世界, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+17 10 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddworld.js, tag=东东世界, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 =================================Loon===================================
 [Script]
-cron "17 10 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddword.js,tag=东东世界
+cron "17 10 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddworld.js,tag=东东世界
 ===================================Surge================================
-东东世界 = type=cron,cronexp="17 10 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddword.js
+东东世界 = type=cron,cronexp="17 10 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddworld.js
 ====================================小火箭=============================
-东东世界 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddword.js, cronexpr="17 10 * * *", timeout=3600, enable=true
+东东世界 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddworld.js, cronexpr="17 10 * * *", timeout=3600, enable=true
  */
 /*
 东东世界
@@ -25,14 +25,14 @@ https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_ddworld.js
 ============Quantumultx===============
 [task_local]
 #东东世界
-17 10 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddword.js, tag=东东世界, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
+17 10 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddworld.js, tag=东东世界, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
 ================Loon==============
 [Script]
-cron "17 10 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddword.js,tag=东东世界
+cron "17 10 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddworld.js,tag=东东世界
 ===============Surge=================
-东东世界 = type=cron,cronexp="17 10 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddword.js
+东东世界 = type=cron,cronexp="17 10 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddworld.js
 ============小火箭=========
-东东世界 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddword.js, cronexpr="17 10 * * *", timeout=3600, enable=true
+东东世界 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddworld.js, cronexpr="17 10 * * *", timeout=3600, enable=true
  */
 const $ = new Env('东东世界');
 const notify = $.isNode() ? require('./sendNotify') : '';
