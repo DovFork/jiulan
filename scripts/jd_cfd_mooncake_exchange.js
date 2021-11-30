@@ -134,7 +134,7 @@ async function exchangePinPinPearlStateByMax(){
 // 兑换
 async function exchangePinPinPearl(ddwVirHb,dwLvl,strPoolName,again) {
     return new Promise(async (resolve) => {
-        $.get(taskUrl(`user/ExchangePearlHb`, `__t=${Date.now()}&strZone=jxbfd&dwLvl=${dwLvl}&dwIsRandHb=1&ddwVirHb=${ddwVirHb}&strPoolName=${strPoolName}&dwExchangeType=0`), async (err, resp, data) => {
+        $.get(taskUrl(`user/ExchangePearlHb`, `__t=${Date.now()}&strZone=jxbfd&dwLvl=${dwLvl}&dwIsRandHb=${ddwVirHb ? 0 : 1}&ddwVirHb=${ddwVirHb}&strPoolName=${strPoolName}&dwExchangeType=0`), async (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
