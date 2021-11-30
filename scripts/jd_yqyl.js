@@ -83,8 +83,8 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
                 continue
             }
             if(helpAuthorFlag){
-                if (cookiesArr.length < 10){
-                    console.log(`cookie数量小于十,活动意义不大\n`)
+                if (cookiesArr.length < 30){
+                    console.log(`cookie数量小于30,活动意义不大\n`)
                     console.log(`作者维护不易，默认给作者助力  感谢 `)
                     await helpme(authorCode)
                 }else {
