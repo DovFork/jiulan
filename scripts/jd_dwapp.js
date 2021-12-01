@@ -8,14 +8,14 @@
 =================================Quantumultx=========================
 [task_local]
 #积分换话费
-cron 33 7,19 * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_dwapp.js, tag=积分换话费, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+33 7,19 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_dwapp.js, tag=积分换话费, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 =================================Loon===================================
 [Script]
-cron "cron 33 7,19 *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_dwapp.js,tag=积分换话费
+cron "33 7,19 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_dwapp.js,tag=积分换话费
 ===================================Surge================================
-积分换话费 = type=cron,cronexp="cron 33 7,19 *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_dwapp.js
+积分换话费 = type=cron,cronexp="33 7,19 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_dwapp.js
 ====================================小火箭=============================
-积分换话费 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_dwapp.js, cronexpr="cron 33 7,19 *", timeout=3600, enable=true
+积分换话费 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_dwapp.js, cronexpr="33 7,19 * * *", timeout=3600, enable=true
  */
 const $ = new Env('积分换话费');
 const notify = $.isNode() ? require('./sendNotify') : '';
