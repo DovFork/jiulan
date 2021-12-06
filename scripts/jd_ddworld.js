@@ -1,23 +1,5 @@
 /*
 东东世界
-入口 https://3.cn/102TmB-4K
-活动时间：
-更新时间  https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_ddworld.js
-脚本兼容: QuantumultX, Surge,Loon, JSBox, Node.js
-=================================Quantumultx=========================
-[task_local]
-#东东世界
-17 10 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddworld.js, tag=东东世界, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
-=================================Loon===================================
-[Script]
-cron "17 10 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddworld.js,tag=东东世界
-===================================Surge================================
-东东世界 = type=cron,cronexp="17 10 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddworld.js
-====================================小火箭=============================
-东东世界 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_ddworld.js, cronexpr="17 10 * * *", timeout=3600, enable=true
- */
-/*
-东东世界
 活动入口：https://3.cn/102TmB-4K
 https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_ddworld.js
 已支持IOS双京东账号,Node.js支持N个京东账号
