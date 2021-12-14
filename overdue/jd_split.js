@@ -9,17 +9,17 @@ by: https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_split.js
 ============Quantumultx===============
 [task_local]
 #金榜年终奖
-10 0,2,14 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_split.js, tag=金榜年终奖, enabled=true
+10 0,2,14,23 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_split.js, tag=金榜年终奖, enabled=true
 
 ================Loon==============
 [Script]
-cron "10 0,2,14 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_split.js,tag=金榜年终奖
+cron "10 0,2,14,23 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_split.js,tag=金榜年终奖
 
 ===============Surge=================
-金榜年终奖 = type=cron,cronexp="10 0,2,14 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_split.js
+金榜年终奖 = type=cron,cronexp="10 0,2,14,23 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_split.js
 
 ============小火箭=========
-金榜年终奖 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_split.js, cronexpr="10 0,2,14 * * *", timeout=3600, enable=true
+金榜年终奖 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_split.js, cronexpr="10 0,2,14,23 * * *", timeout=3600, enable=true
  */
 const $ = new Env('金榜年终奖');
 const notify = $.isNode() ? require('./sendNotify') : '';
