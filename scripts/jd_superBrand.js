@@ -8,14 +8,14 @@
 =================================Quantumultx=========================
 [task_local]
 #特物Z
-10 9,13,16,19,20 2-8 11 * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_superBrand.js, tag=特物Z, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+10 9,13,16,19,20 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_superBrand.js, tag=特物Z, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 =================================Loon===================================
 [Script]
-cron "10 9,13,16,19,20 2-8 11 *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_superBrand.js,tag=特物Z
+cron "10 9,13,16,19,20 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_superBrand.js,tag=特物Z
 ===================================Surge================================
-特物Z = type=cron,cronexp="10 9,13,16,19,20 2-8 11 *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_superBrand.js
+特物Z = type=cron,cronexp="10 9,13,16,19,20 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_superBrand.js
 ====================================小火箭=============================
-特物Z = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_superBrand.js, cronexpr="10 9,13,16,19,20 2-8 11 *", timeout=3600, enable=true
+特物Z = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_superBrand.js, cronexpr="10 9,13,16,19,20 * * *", timeout=3600, enable=true
  */
 const $ = new Env('特物Z');
 //Node.js用户请在jdCookie.js处填写京东ck;
