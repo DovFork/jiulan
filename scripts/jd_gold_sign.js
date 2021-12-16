@@ -1,11 +1,11 @@
 /*
 京东金榜
-
-by: TG频道：https://t.me/sheeplost
-活动时间：2021-07-15到2021-0815
-更新时间：2021-06-3 12:00
-脚本兼容: QuantumultX, Surge,Loon, JSBox, Node.js
-=================================Quantumultx=========================
+活动入口：https://h5.m.jd.com/babelDiy/Zeus/2H5Ng86mUJLXToEo57qWkJkjFPxw/index.html
+by:小手冰凉 tg:@chianPLA
+脚本更新时间：2021-11-18 14:20
+脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
+新手写脚本，难免有bug，能用且用。
+===================quantumultx================
 [task_local]
 #京东金榜
 13 6 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_gold_sign.js, tag=京东金榜, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
@@ -92,11 +92,9 @@ function goldCenterHead() {
                     if (safeGet(data)) {
                         data = JSON.parse(data)
                         if (data.code === '0') {
-                            // console.log(data);
+                            await goldCreatorDoTask({ "type": 1 })
                             if (data.result.medalNum === 5) {
                                 await goldCreatorDoTask({ "type": 2 })
-                            } else {
-                                await goldCreatorDoTask({ "type": 1 })
                             }
                         } else {
                             console.log(`失败：${JSON.stringify(data)}\n`);
