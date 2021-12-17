@@ -451,7 +451,6 @@ function  generation(pname,usePname,type){
         getRandomArrayElements(data[type]["中间"],1)[0].replace('$',name)+
         getRandomArrayElements(data[type]["结束"],1)[0].replace('$',name)+
         new Date().getTime();
-    console.log(context)
     return context
 }
 function taskUrl(orderType,startPage,pageSize) {
@@ -534,6 +533,7 @@ function safeGet(data) {
         }
     } catch (e) {
         console.log(e);
+        console.log("data",data);
         console.log(`京东服务器访问数据为空，请检查自身设备网络情况`);
         return false;
     }
