@@ -151,7 +151,7 @@ async function queryInteractiveInfo(encryptProjectId, sourceCode) {
                         for (let key of Object.keys(data.assignmentList)) {
                             let vo = data.assignmentList[key]
                             if (vo.ext.extraType === "sign1") {
-                                console.log(`去做【${vo.assignmentName}】`)
+                                console.log(`去做1【${vo.assignmentName}】`)
                                 if (vo.ext[vo.ext.extraType].status !== 2) {
                                     let signDay = (vo.ext[vo.ext.extraType].signList && vo.ext[vo.ext.extraType].signList.length) || 0
                                     $.type = vo.rewards[signDay].rewardType
@@ -175,7 +175,7 @@ async function queryInteractiveInfo(encryptProjectId, sourceCode) {
                                 }
                             } else if (vo.ext.extraType !== "brandMemberList") {
                                 if (Object.keys(vo.ext).length && Object.keys(vo.ext[vo.ext.extraType]).length) {
-                                    console.log(`去做【${vo.assignmentName}】`)
+                                    console.log(`去做2【${vo.assignmentName}】`)
                                     if (vo.completionCnt < vo.assignmentTimesLimit) {
                                         $.type = vo.rewards[0].rewardType
                                         for (let key of Object.keys(vo.ext[vo.ext.extraType])) {
@@ -267,7 +267,7 @@ function doInteractiveAssignment(extraType, encryptProjectId, sourceCode, encryp
                         } else if (extraType === "sign1") {
                             console.log(`签到成功：获得${data.rewardsInfo.successRewards[$.type][0] ? `${data.rewardsInfo.successRewards[$.type][0].quantity}${data.rewardsInfo.successRewards[$.type][0].rewardName}` : `${data.rewardsInfo.successRewards[$.type].quantityDetails[0].quantity}${data.rewardsInfo.successRewards[$.type].quantityDetails[0].rewardName}`}`)
                         } else if (actionType === "0") {
-                            if (data.assignmentInfo.completionCnt === data.assignmentInfo.maxTimes) {
+                            if (data.code === 0) {
                                 $.complete = true
                                 console.log(`完成成功：获得${data.rewardsInfo.successRewards[$.type][0] ? `${data.rewardsInfo.successRewards[$.type][0].quantity}${data.rewardsInfo.successRewards[$.type][0].rewardName}` : `${data.rewardsInfo.successRewards[$.type].quantityDetails[0].quantity}${data.rewardsInfo.successRewards[$.type].quantityDetails[0].rewardName}`}`)
                             }

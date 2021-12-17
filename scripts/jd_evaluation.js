@@ -148,7 +148,7 @@ function getOrderList(orderType,startPage,pageSize){
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                 } else {
                     if (safeGet(data)) {
-                        data = $.toObj(data);
+                        data = JSON.parse(data);
                         if (data.errCode === '0') {
                             if (data.orderList && data.orderList.length) {
                                 for (let da of data.orderList) {
@@ -234,8 +234,8 @@ function sendEval(item){
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                 } else {
                     if (safeGet(data)) {
-                        data = $.toObj(data);
-                        if (data.errMsg === 'success') {
+                        data = JSON.parse(data);;
+                        if (data.iRet === 0) {
                             console.log('普通评价成功！');
                         } else {
                             console.log('普通评价失败了.....');
@@ -289,7 +289,7 @@ function sendServiceEval(item){
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                 } else {
                     if (safeGet(data)) {
-                        data = $.toObj(data);
+                        data = JSON.parse(data);;
                         if (data.errMsg === 'success') {
                             console.log('服务评价成功！');
                         } else {
@@ -347,7 +347,7 @@ function appendComment(item){
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                 } else {
                     if (safeGet(data)) {
-                        data = $.toObj(data);
+                        data = JSON.parse(data);;
                         if (data.errMsg === 'success') {
                             console.log('晒单成功！');
                         } else {
@@ -528,6 +528,9 @@ function TotalBean() {
 }
 function safeGet(data) {
     try {
+        if(data.indexOf('json(') === 0){
+            data = data.replace(/\n/g, "").match(new RegExp(/json.?\((.*);*\)/))[1]
+        }
         if (typeof JSON.parse(data) == "object") {
             return true;
         }
