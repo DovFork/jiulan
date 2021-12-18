@@ -36,7 +36,8 @@ let commentImgList = [
     '//img30.360buyimg.com/shaidan/jfs/t1/169124/31/25110/42459/61a586c7Ec6b49656/1549ee98784f868d.jpg',
     '//img30.360buyimg.com/shaidan/jfs/t1/220117/4/6009/64307/61a586d6E0d3462c9/2d49512023e40761.jpg',
     '//img30.360buyimg.com/shaidan/jfs/t1/156957/9/27398/4391/61bb2a3cEca6a4bab/20005aabe0573a0a.jpg',
-    '//img30.360buyimg.com/shaidan/jfs/t1/143995/15/24443/5327/61860ba4Ecba97817/d7faafa606f76b1f.jpg'];
+    '//img30.360buyimg.com/shaidan/jfs/t1/143995/15/24443/5327/61860ba4Ecba97817/d7faafa606f76b1f.jpg'
+];
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
@@ -200,10 +201,11 @@ function sendEval(item){
         'syncsg': 0,
         'content': generation(item['name'],true,"1"),
         'userclient': 29,
-        'imageJson': getRandomArrayElements(commentImgList,1)[0],
+        'imageJson': '',
         'videoid':'',
         'URL':''
     }
+    //getRandomArrayElements(commentImgList,1)[0]
     return new Promise(async (resolve) => {
         let content = urlEncode(data);
         content = content.substr(1,content.length);
@@ -316,8 +318,9 @@ function appendComment(item){
         'orderId': item['oid'],
         'content': generation(item['name'],false,"0"),
         'userclient': 29,
-        'imageJson': getRandomArrayElements(commentImgList,1)[0]
+        'imageJson': ''
     }
+    //getRandomArrayElements(commentImgList,1)[0]
     let content = urlEncode(data);
     content = content.substr(1,content.length);
     return new Promise(async (resolve) => {
@@ -449,8 +452,7 @@ function  generation(pname,usePname,type){
     }
     let context = getRandomArrayElements(data[type]["开始"],1)[0].replace('$',name)+
         getRandomArrayElements(data[type]["中间"],1)[0].replace('$',name)+
-        getRandomArrayElements(data[type]["结束"],1)[0].replace('$',name)+
-        new Date().getTime();
+        getRandomArrayElements(data[type]["结束"],1)[0].replace('$',name);
     return context
 }
 function taskUrl(orderType,startPage,pageSize) {
