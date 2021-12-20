@@ -1,5 +1,9 @@
 /*
-author：https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_mf.js
+京东小魔方
+by https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mofang.js
+已支持IOS双京东账号,Node.js支持N个京东账号
+脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
+============Quantumultx===============
 [task_local]
 #京东小魔方
 10 2,9 * * * jd_mf.js, tag= 京东小魔方
@@ -20,8 +24,6 @@ let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭�
 let cookiesArr = [], cookie = '', message;
 let uuid
 $.shareCodes = []
-//抽奖继续执行
-$.execute = true;
 let hotInfo = {}
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
@@ -86,20 +88,6 @@ let allMessage = '';
                 }
             }
         }
-
-    }
-    for (let i = 0; i < cookiesArr.length; i++) {
-        cookie = cookiesArr[i];
-        $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-        $.index = i + 1;
-        console.log(`【京东账号${$.index}（${$.UserName}）测试抽奖`)
-        $.execute = true;
-        for (let j = 0; j < 10 && $.execute; j++) {
-            await doInteractiveAssignment("test", "3pp3mvzmgcFm7mvU3S1wZihNKi1H","acexinpin0823", "3Qia2BF8oxZWEFsNdAEAuZsTXHqA", "","",{"exchangeNum":1})
-        }
-        for (let j = 0; j < 10 && $.execute; j++) {
-            await doInteractiveAssignment("test", "3pp3mvzmgcFm7mvU3S1wZihNKi1H","acexinpin0823", "2qZXV5kAqBJjkJmYi8C2874WyHxj", "","",{"exchangeNum":1})
-        }
     }
 })()
     .catch((e) => {
@@ -112,8 +100,8 @@ let allMessage = '';
 async function jdMofang() {
     console.log(`集魔方 赢大奖`)
     await getInteractionHomeInfo()
-    console.log(`\n集魔方 抽京豆 赢新品`)
-    await getInteractionInfo()
+    //console.log(`\n集魔方 抽京豆 赢新品`)
+    //await getInteractionInfo()
 }
 
 async function getInteractionHomeInfo() {
@@ -138,9 +126,8 @@ async function getInteractionHomeInfo() {
     })
 }
 async function queryInteractiveInfo(encryptProjectId, sourceCode) {
-    console.log("encryptProjectId:   ",encryptProjectId)
     return new Promise(async (resolve) => {
-        $.post(taskUrl("queryInteractiveInfo", {"encryptProjectId":encryptProjectId,"sourceCode":sourceCode,"ext":{"couponUsableGetSwitch":"1"}}), async (err, resp, data) => {
+        $.post(taskUrl("queryInteractiveInfo", {"encryptProjectId":encryptProjectId,"sourceCode":sourceCode,"ext":{}}), async (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -151,7 +138,7 @@ async function queryInteractiveInfo(encryptProjectId, sourceCode) {
                         for (let key of Object.keys(data.assignmentList)) {
                             let vo = data.assignmentList[key]
                             if (vo.ext.extraType === "sign1") {
-                                console.log(`去做1【${vo.assignmentName}】`)
+                                console.log(`去做【${vo.assignmentName}】`)
                                 if (vo.ext[vo.ext.extraType].status !== 2) {
                                     let signDay = (vo.ext[vo.ext.extraType].signList && vo.ext[vo.ext.extraType].signList.length) || 0
                                     $.type = vo.rewards[signDay].rewardType
@@ -160,46 +147,47 @@ async function queryInteractiveInfo(encryptProjectId, sourceCode) {
                                 } else {
                                     console.log(`今日已签到`)
                                 }
-                            } else if (vo.ext.extraType === "assistTaskDetail") {
-                                console.log(`【京东账号${$.index}（${$.UserName}）的京东小魔方好友互助码】${vo.ext[vo.ext.extraType].itemId}`)
-                                $.encryptProjectId = encryptProjectId
-                                $.encryptAssignmentId = vo.encryptAssignmentId
-                                $.sourceCode = sourceCode
-                                if (vo.completionCnt < vo.assignmentTimesLimit) {
-                                    $.shareCodes.push({
-                                        "code": vo.ext[vo.ext.extraType].itemId,
-                                        "use": $.UserName
-                                    })
-                                } else {
-                                    console.log(`助力已满`)
-                                }
-                            } else if (vo.ext.extraType !== "brandMemberList") {
-                                if (Object.keys(vo.ext).length && Object.keys(vo.ext[vo.ext.extraType]).length) {
-                                    console.log(`去做2【${vo.assignmentName}】`)
-                                    if (vo.completionCnt < vo.assignmentTimesLimit) {
-                                        $.type = vo.rewards[0].rewardType
-                                        for (let key of Object.keys(vo.ext[vo.ext.extraType])) {
-                                            let task = vo.ext[vo.ext.extraType][key]
-                                            if (task.status !== 2) {
-                                                if (vo.ext.extraType !== "productsInfo" && vo.ext.extraType !== "addCart") {
-                                                    await doInteractiveAssignment(vo.ext.extraType, encryptProjectId, sourceCode, vo.encryptAssignmentId, task.itemId, "1")
-                                                    await $.wait((vo.ext.waitDuration * 1000) || 2000)
-                                                }
-                                                if (vo.ext.extraType === "browseShop") {
-                                                    $.rewardmsg = `完成成功：获得${vo.rewards[0].rewardValue}${vo.rewards[0].rewardName}`
-                                                    await qryViewkitCallbackResult(encryptProjectId, vo.encryptAssignmentId, task.itemId)
-                                                } else {
-                                                    $.complete = false
-                                                    await doInteractiveAssignment(vo.ext.extraType, encryptProjectId, sourceCode, vo.encryptAssignmentId, task.itemId, "0")
-                                                    if ($.complete) break
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        console.log(`任务已完成`)
-                                    }
-                                }
                             }
+                            //  else if (vo.ext.extraType === "assistTaskDetail") {
+                            //   console.log(`【京东账号${$.index}（${$.UserName}）的京东小魔方好友互助码】${vo.ext[vo.ext.extraType].itemId}`)
+                            //   $.encryptProjectId = encryptProjectId
+                            //   $.encryptAssignmentId = vo.encryptAssignmentId
+                            //   $.sourceCode = sourceCode
+                            //   if (vo.completionCnt < vo.assignmentTimesLimit) {
+                            //     $.shareCodes.push({
+                            //       "code": vo.ext[vo.ext.extraType].itemId,
+                            //       "use": $.UserName
+                            //     })
+                            //   } else {
+                            //     console.log(`助力已满`)
+                            //   }
+                            // } else if (vo.ext.extraType !== "brandMemberList") {
+                            //   if (Object.keys(vo.ext).length && Object.keys(vo.ext[vo.ext.extraType]).length) {
+                            //     console.log(`去做【${vo.assignmentName}】`)
+                            //     if (vo.completionCnt < vo.assignmentTimesLimit) {
+                            //       $.type = vo.rewards[0].rewardType
+                            //       for (let key of Object.keys(vo.ext[vo.ext.extraType])) {
+                            //         let task = vo.ext[vo.ext.extraType][key]
+                            //         if (task.status !== 2) {
+                            //           if (vo.ext.extraType !== "productsInfo" && vo.ext.extraType !== "addCart") {
+                            //             await doInteractiveAssignment(vo.ext.extraType, encryptProjectId, sourceCode, vo.encryptAssignmentId, task.itemId, "1")
+                            //             await $.wait((vo.ext.waitDuration * 1000) || 2000)
+                            //           }
+                            //           if (vo.ext.extraType === "browseShop") {
+                            //             $.rewardmsg = `完成成功：获得${vo.rewards[0].rewardValue}${vo.rewards[0].rewardName}`
+                            //             await qryViewkitCallbackResult(encryptProjectId, vo.encryptAssignmentId, task.itemId)
+                            //           } else {
+                            //             $.complete = false
+                            //             await doInteractiveAssignment(vo.ext.extraType, encryptProjectId, sourceCode, vo.encryptAssignmentId, task.itemId, "0")
+                            //             if ($.complete) break
+                            //           }
+                            //         }
+                            //       }
+                            //     } else {
+                            //       console.log(`任务已完成`)
+                            //     }
+                            //   }
+                            // }
                         }
                     }
                 }
@@ -239,9 +227,9 @@ async function qryViewkitCallbackResult(encryptProjectId, encryptAssignmentId, i
         })
     })
 }
-function doInteractiveAssignment(extraType, encryptProjectId, sourceCode, encryptAssignmentId, itemId, actionType = "",ext) {
+function doInteractiveAssignment(extraType, encryptProjectId, sourceCode, encryptAssignmentId, itemId, actionType = "") {
     return new Promise((resolve) => {
-        $.post(taskUrl("doInteractiveAssignment", {"encryptProjectId":encryptProjectId,"encryptAssignmentId":encryptAssignmentId,"sourceCode":sourceCode,"itemId":itemId,"actionType":actionType,"completionFlag":"","ext":ext?ext:{}}), (err, resp, data) => {
+        $.post(taskUrl("doInteractiveAssignment", {"encryptProjectId":encryptProjectId,"encryptAssignmentId":encryptAssignmentId,"sourceCode":sourceCode,"itemId":itemId,"actionType":actionType,"completionFlag":"","ext":{}}), (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -270,14 +258,6 @@ function doInteractiveAssignment(extraType, encryptProjectId, sourceCode, encryp
                             if (data.code === 0) {
                                 $.complete = true
                                 console.log(`完成成功：获得${data.rewardsInfo.successRewards[$.type][0] ? `${data.rewardsInfo.successRewards[$.type][0].quantity}${data.rewardsInfo.successRewards[$.type][0].rewardName}` : `${data.rewardsInfo.successRewards[$.type].quantityDetails[0].quantity}${data.rewardsInfo.successRewards[$.type].quantityDetails[0].rewardName}`}`)
-                            }
-                        }else  if (extraType === "test"){
-                            console.log("兑换")
-                            if (data.subCode === '0') {
-                                console.log("兑换成功")
-                            }else {
-                                $.execute = false
-                                console.log("data",data)
                             }
                         }
                     }
@@ -329,7 +309,17 @@ async function getInteractionInfo(type = true) {
                             }
                             data = await getInteractionInfo(false)
                             if (data.result.hasFinalLottery === 0) {
-
+                                let num = 0
+                                for (let key of Object.keys(data.result.taskPoolInfo.taskRecord)) {
+                                    let vo = data.result.taskPoolInfo.taskRecord[key]
+                                    num += vo
+                                }
+                                if (num >= 9) {
+                                    console.log(`共找到${num}个魔方，可开启礼盒`)
+                                    await getNewFinalLotteryInfo()
+                                } else {
+                                    console.log(`共找到${num}个魔方，不可开启礼盒`)
+                                }
                             } else {
                                 console.log(`已开启礼盒`)
                             }
@@ -516,39 +506,6 @@ function getSign(functionid, body, uuid) {
                 }
             } catch (e) {
                 $.logErr(e, resp)
-            } finally {
-                resolve(data);
-            }
-        })
-    })
-}
-function getAuthorShareCode(url) {
-    return new Promise(resolve => {
-        const options = {
-            url: `${url}?${new Date()}`, "timeout": 10000, headers: {
-                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-            }
-        };
-        if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
-            const tunnel = require("tunnel");
-            const agent = {
-                https: tunnel.httpsOverHttp({
-                    proxy: {
-                        host: process.env.TG_PROXY_HOST,
-                        port: process.env.TG_PROXY_PORT * 1
-                    }
-                })
-            }
-            Object.assign(options, { agent })
-        }
-        $.get(options, async (err, resp, data) => {
-            try {
-                if (err) {
-                } else {
-                    if (data) data = JSON.parse(data)
-                }
-            } catch (e) {
-                // $.logErr(e, resp)
             } finally {
                 resolve(data);
             }
