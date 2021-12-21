@@ -10,17 +10,17 @@ export EVAL_IMGS=‘//img30.360buyimg.com/shaidan/jfs/t1/169124/31/25110/42459/6
 ============Quantumultx===============
 [task_local]
 #京东评价
-37 15 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_evaluation.js, tag=京东评价, enabled=true
+10 12 26 * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_evaluation.js, tag=京东评价, enabled=true
 
 ================Loon==============
 [Script]
-cron "37 15 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_evaluation.js,tag=京东评价
+cron "10 12 26 * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_evaluation.js,tag=京东评价
 
 ===============Surge=================
-京东评价 = type=cron,cronexp="37 15 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_evaluation.js
+京东评价 = type=cron,cronexp="10 12 26 * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_evaluation.js
 
 ============小火箭=========
-京东评价 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_evaluation.js, cronexpr="37 15 * * *", timeout=3600, enable=true
+京东评价 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_evaluation.js, cronexpr="10 12 26 * *", timeout=3600, enable=true
  */
 const $ = new Env('京东评价');
 const notify = $.isNode() ? require('./sendNotify') : '';
