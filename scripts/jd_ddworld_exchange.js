@@ -19,7 +19,7 @@ cron "2 0,17 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypu
 const $ = new Env("东东世界兑换");
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
-let cookiesArr = [], cookie = '',UUID="",UA=""
+let cookiesArr = [], cookie = ''
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
@@ -73,11 +73,12 @@ async function main() {
             await task('get_exchange');
             if (!$.hotFlag) {
                 if ($.exchangeList) {
-                    $.exchangeList = $.exchangeList.filter((x) => !x.name.includes('红包'))
                     for (const vo of $.exchangeList.reverse()) {
-                        $.log(`去兑换：${vo.name}`)
-                        await taskPost('do_exchange', `id=${vo.id}`);
-                        await $.wait(5000)
+                        if (!vo.name.match(/红包\d*/)) {
+                            $.log(`去兑换：${vo.name}`)
+                            await taskPost('do_exchange', `id=${vo.id}`);
+                            await $.wait(3000)
+                        }
                     }
                 } else {
                     $.log("没有获取到兑换列表！")
@@ -137,9 +138,8 @@ function taskPost(function_id, body) {
                                 if (data.prize) {
                                     console.log(`兑换成功：数量${data.prize.setting.beans_count}`)
                                 } else {
-                                    console.log(JSON.stringify(data["message"]))
+                                    console.log(JSON.stringify(data))
                                 }
-                                console.log(``)
                                 break;
                             default:
                                 $.log(JSON.stringify(data))
@@ -169,7 +169,7 @@ function taskPostUrl(function_id, body) {
             "Accept-Encoding": "gzip, deflate, br",
             "Content-Type": "application/x-www-form-urlencoded",
             "Origin": "https://ddsj-dz.isvjcloud.com",
-            "User-Agent": $.UA,
+            "User-Agent": UA,
             "Connection": "keep-alive",
             "Referer": "https://ddsj-dz.isvjcloud.com/dd-world/logined_jd/",
         }
@@ -187,7 +187,7 @@ function taskUrl(function_id) {
             "Accept": "application/json, text/plain, */*",
             "Referer": "https://ddsj-dz.isvjcloud.com/dd-world",
             "Accept-Language": "zh-cn",
-            "User-Agent": $.UA,
+            "User-Agent": UA,
             "Authorization": `${$.tokenType} ${$.accessToken}`,
         }
     }
