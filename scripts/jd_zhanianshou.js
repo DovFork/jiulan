@@ -17,6 +17,10 @@ cron "0 0-23/5 * * *" script-path=https://raw.githubusercontent.com/jiulan/platy
 ====================================小火箭=============================
 炸年兽 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_zhanianshou.js, cronexpr="0 0-23/5 * * *", timeout=3600, enable=true
  */
+if (process.env.ZNS != 'true') {
+    console.log('脚本默认不运行,请设置环境变量ZNS为true运行,可能黑号,运行前最少手动进去过一次')
+    return
+}
 const $ = new Env('炸年兽');
 
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -37,7 +41,9 @@ if ($.isNode()) {
     cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
-let inviteCodes = []
+let inviteCodes = [
+
+]
 $.shareCodesArr = [];
 
 !(async() => {
@@ -159,15 +165,19 @@ $.shareCodesArr = [];
                                 }
                                 break
                             case 21:
-                                for (var o = 0; o < task.brandMemberVos.length; o++) {
-                                    if (task.brandMemberVos[o].status == 1) {
-                                        console.log(`\n\n ${task.brandMemberVos[o].title}`)
-                                        memberUrl = task.brandMemberVos[o].memberUrl
-                                        memberUrl = transform(memberUrl)
-                                        await join(task.brandMemberVos[o].vendorIds, memberUrl.channel, memberUrl.shopId ? memberUrl.shopId : "")
-                                        await tigernian_collectScore(task.brandMemberVos[o].taskToken, task.taskId)
-                                    }
+                                if (process.env.FS_LEVEL != 'card') {
+                                    console.log('默认不开卡，设置FS_LEVEL为card开卡')
+                                }else{
+                                    for (var o = 0; o < task.brandMemberVos.length; o++) {
+                                        if (task.brandMemberVos[o].status == 1) {
+                                            console.log(`\n\n ${task.brandMemberVos[o].title}`)
+                                            memberUrl = task.brandMemberVos[o].memberUrl
+                                            memberUrl = transform(memberUrl)
+                                            await join(task.brandMemberVos[o].vendorIds, memberUrl.channel, memberUrl.shopId ? memberUrl.shopId : "")
+                                            await tigernian_collectScore(task.brandMemberVos[o].taskToken, task.taskId)
+                                        }
 
+                                    }
                                 }
                         }
 
