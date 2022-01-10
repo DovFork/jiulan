@@ -61,6 +61,7 @@ $.shareCodesArr = [];
             await getUA()
         }
     }
+    $.newShareCodes = []
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i];
@@ -71,24 +72,23 @@ $.shareCodesArr = [];
             message = '';
             console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
             //   await shareCodesFormat()
-            $.newShareCodes = []
-            for (let i = 0; i < $.newShareCodes.length && true; ++i) {
-                console.log(`\n开始助力 【${$.newShareCodes[i]}】`)
-                let res = await getInfo($.newShareCodes[i])
-                if (res && res['data'] && res['data']['bizCode'] === 0) {
-                    if (res['data']['result']['toasts'] && res['data']['result']['toasts'][0] && res['data']['result']['toasts'][0]['status'] === '3') {
-                        console.log(`助力次数已耗尽，跳出`)
-                        break
-                    }
-                    if (res['data']['result']['toasts'] && res['data']['result']['toasts'][0]) {
-                        console.log(`助力 【${$.newShareCodes[i]}】:${res.data.result.toasts[0].msg}`)
-                    }
-                }
-                if ((res && res['status'] && res['status'] === '3') || (res && res.data && res.data.bizCode === -11)) {
-                    // 助力次数耗尽 || 黑号
-                    break
-                }
-            }
+            // for (let i = 0; i < $.newShareCodes.length && true; ++i) {
+            //     console.log(`\n开始助力 【${$.newShareCodes[i]}】`)
+            //     let res = $.newShareCodes[i]
+            //     if (res && res['data'] && res['data']['bizCode'] === 0) {
+            //         if (res['data']['result']['toasts'] && res['data']['result']['toasts'][0] && res['data']['result']['toasts'][0]['status'] === '3') {
+            //             console.log(`助力次数已耗尽，跳出`)
+            //             break
+            //         }
+            //         if (res['data']['result']['toasts'] && res['data']['result']['toasts'][0]) {
+            //             console.log(`助力 【${$.newShareCodes[i]}】:${res.data.result.toasts[0].msg}`)
+            //         }
+            //     }
+            //     if ((res && res['status'] && res['status'] === '3') || (res && res.data && res.data.bizCode === -11)) {
+            //         // 助力次数耗尽 || 黑号
+            //         break
+            //     }
+            // }
             try {
                 await get_secretp()
 
@@ -380,6 +380,7 @@ function tigernian_getTaskDetail() {
         })
     })
 }
+
 
 function tigernian_collectScore(taskToken, taskId) {
     let body = { "taskId": taskId, "taskToken": taskToken, "actionType": 1, "ss": { "extraData": { "log": "", "sceneid": "ZNShPageh5" }, "secretp": secretp, "random": randomString(6) } };
