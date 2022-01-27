@@ -33,7 +33,7 @@ if ($.isNode()) {
     cookiesArr = [$.getdata("CookieJD"), $.getdata("CookieJD2"), ...$.toObj($.getdata("CookiesJD") || "[]").map((item) => item.cookie)].filter((item) => !!item);
 }
 $.packetIdArr = [];
-$.activeId = '525597';
+$.activeId = '529439';
 const BASE_URL = 'https://m.jingxi.com/cubeactive/steprewardv3'
 !(async () => {
     if (!cookiesArr[0]) {
@@ -147,7 +147,7 @@ function joinActive() {
                     console.log(`\n${$.name}:  API查询请求失败 ‼️‼️`)
                     $.logErr(err);
                 } else {
-                    // console.log('开启活动', data)
+                    console.log('开启活动', data)
                     data = JSON.parse(data)
                     if (data.iRet === 0) {
                         console.log(`活动开启成功,助力邀请码为:${data.Data.strUserPin}\n`);
@@ -311,7 +311,7 @@ function getAuthorShareCode(url) {
 }
 
 function taskurl(function_path, body = '', stk) {
-    let url = `${BASE_URL}/${function_path}?activeId=${$.activeId}&publishFlag=1&channel=7&${body}&sceneval=2&g_login_type=1&timestamp=${token['timestamp']}&_=${Date.now() + 2}&_ste=1`
+    let url = `${BASE_URL}/${function_path}?activeId=${$.activeId}&publishFlag=1&userDraw=0&channel=7&${body}&sceneval=2&g_login_type=1&timestamp=${token['timestamp']}&_=${Date.now() + 2}&_t=${Date.now() + 2}&_ste=activeId`
     url += `&phoneid=${token['phoneid']}`
     url += `&stepreward_jstoken=${token['farm_jstoken']}`
     if (stk) {
