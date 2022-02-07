@@ -119,13 +119,14 @@ message = ""
 
 
 async function getJoyBaseInfo(taskId = '', inviteType = '', inviterPin = '', printLog = false) {
-    //await $.wait(20)
+    await $.wait(20)
     return new Promise(resolve => {
         $.post(taskPostClientActionUrl(`body={"taskId":"${taskId}","inviteType":"${inviteType}","inviterPin":"${inviterPin}","linkId":"LsQNxL7iWDlXUs6cFl-AAg"}&appid=activities_platform`, `joyBaseInfo`), async (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
                     console.log(`${$.name} getJoyBaseInfo API请求失败，请检查网路重试`)
+                    $.joyBaseInfo = undefined;
                 } else {
                     data = JSON.parse(data);
                     if (printLog) {
@@ -342,6 +343,7 @@ function doJoyMerge(joyId1, joyId2) {
                     console.log(`${JSON.stringify(err)}`)
                     console.log(`${$.name} API请求失败，请检查网路重试`)
                     data = {}
+                    hot_flag = true
                 } else {
                     data = JSON.parse(data);
                     $.log(`合成 ${joyId1} <=> ${joyId2} ${data.success ? `成功！` : `失败！【${data.errMsg}】 code=${data.code}`}`)
