@@ -1,5 +1,6 @@
 /*
 萌虎摇摇乐
+活动地址：  https://yearfestival.jd.com
 更新时间：2022-1-27
 脚本兼容: QuantumultX, Surge,Loon, JSBox, Node.js
 更新地址  https://raw.githubusercontent.com/star261/jd/main/scripts/jd_mhyyl.js

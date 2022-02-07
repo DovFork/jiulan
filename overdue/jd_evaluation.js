@@ -98,6 +98,7 @@ let goodsList = []
             await getOrderList(3,1,10)
             if(goodsList && goodsList.length){
                 for(let item of goodsList){
+
                     await $.wait(1000)
                     let cName = item["cname"];
                     if (cName ==="评价晒单"){
@@ -190,8 +191,9 @@ function getOrderList(orderType,startPage,pageSize){
  *  评价和服务评价
  */
 function sendEval(item){
-    let url = "https://comment-api.jd.com/comment/sendEval?sceneval=2&g_login_type=1&g_ty=ajax";
+    let url = "https://api.m.jd.com/api?appid=jd-cphdeveloper-m&functionId=sendEval&sceneval=2&g_login_type=1&g_ty=ajax";
     let data = {
+        "tenantCode":"jgm","bizModeClientType":"M","bizModeFramework":"H5","appId":"m91d27dbf599dff74","token":"3852b12f8c4d869b7ed3e2b3c68c9436","uuid":"37138698034649850",
         'productId': item['pid'],
         'orderId': item['oid'],
         'commentTagStr': 1,
@@ -213,9 +215,8 @@ function sendEval(item){
         let options = {
             url: url,
             headers: {
-                "Host": "comment-api.jd.com",
+                "Host": "api.m.jd.com",
                 "Accept": "application/json",
-
                 "Content-Type": "application/x-www-form-urlencoded",
                 'referer': 'https://comment-api.jd.com',
                 "Cookie": cookie,
@@ -259,6 +260,7 @@ function sendEval(item){
 function sendServiceEval(item){
     let url = `https://comment-api.jd.com/comment/sendDSR?pin=&_=${new Date().getTime()}&sceneval=2&g_login_type=1&callback=json&g_ty=ls`;
     let data = {
+        "tenantCode":"jgm","bizModeClientType":"M","bizModeFramework":"H5","appId":"m91d27dbf599dff74","token":"3852b12f8c4d869b7ed3e2b3c68c9436","uuid":"37138698034649850",
         'userclient': '29',
         'orderId': item["oid"],
         'otype': 1,
@@ -314,20 +316,21 @@ function sendServiceEval(item){
  */
 function appendComment(item){
     let data = {
+        "tenantCode":"jgm","bizModeClientType":"M","bizModeFramework":"H5","appId":"m91d27dbf599dff74","token":"3852b12f8c4d869b7ed3e2b3c68c9436","uuid":"37138698034649850",
         'productId': item['pid'],
         'orderId': item['oid'],
         'content': generation(item['name'],false,"0"),
         'userclient': 29,
-        'imageJson': ''
+        'imageJson': '',"videoid":"","URL":""
     }
     //getRandomArrayElements(commentImgList,1)[0]
     let content = urlEncode(data);
     content = content.substr(1,content.length);
     return new Promise(async (resolve) => {
         let options = {
-            "url": "https://comment-api.jd.com/comment/appendComment?sceneval=2&g_login_type=1&g_ty=ajax",
+            "url": "https://api.m.jd.com/api?appid=jd-cphdeveloper-m&functionId=appendComment&sceneval=2&g_login_type=1&g_ty=ajax",
             "headers": {
-                "Host": "comment-api.jd.com",
+                "Host": "api.m.jd.com",
                 "Accept": "application/json",
                 'Origin': 'https://comment.m.jd.com',
                 'referer': 'https://comment.m.jd.com',
