@@ -78,30 +78,12 @@ message = ""
                 continue
             }
             console.log(`\n\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
-            if ($.isNode()) {
-                if (process.env.HELP_JOYPARK && process.env.HELP_JOYPARK == "false") {
-                } else {
-                    await getShareCode()
-                    if ($.kgw_invitePin && $.kgw_invitePin.length) {
-                        $.log("开始帮【zero205】助力开工位\n");
-                        $.kgw_invitePin = [...($.kgw_invitePin || [])][Math.floor((Math.random() * $.kgw_invitePin.length))];
-                        let resp = await getJoyBaseInfo(undefined, 2, $.kgw_invitePin);
-                        if (resp.helpState && resp.helpState === 1) {
-                            $.log("帮【zero205】开工位成功，感谢！\n");
-                        } else if (resp.helpState && resp.helpState === 3) {
-                            $.log("你不是新用户！跳过开工位助力\n");
-                        } else if (resp.helpState && resp.helpState === 2) {
-                            $.log(`他的工位已全部开完啦！\n`);
-                        } else {
-                            $.log("开工位失败！\n");
-                            console.log(`${JSON.stringify(resp)}`)
-                        }
-                    }
-                }
-            }
             //下地后还有有钱买Joy并且买了Joy
             $.hasJoyCoin = true
             await getJoyBaseInfo(undefined, undefined, undefined, true);
+            if(!$.joyBaseInfo){
+                continue
+            }
             $.activityJoyList = []
             $.workJoyInfoList = []
             await getJoyList(true);
@@ -278,6 +260,9 @@ async function doJoyMergeAll(activityJoyList) {
     let minLevel = Math.min.apply(Math, activityJoyList.map(o => o.level))
     let joyMinLevelArr = activityJoyList.filter(row => row.level === minLevel);
     let joyBaseInfo = await getJoyBaseInfo()
+    if (!joyBaseInfo){
+        return
+    }
     let fastBuyLevel = joyBaseInfo.fastBuyLevel
     if (joyMinLevelArr.length >= 2) {
         $.log(`开始合成 ${minLevel} ${joyMinLevelArr[0].id} <=> ${joyMinLevelArr[1].id} 【限流严重，5秒后合成！如失败会重试】`);
@@ -529,7 +514,8 @@ function taskPostClientActionUrl(body, functionId) {
             'Origin': 'https://joypark.jd.com',
             'Referer': 'https://joypark.jd.com/?activityId=LsQNxL7iWDlXUs6cFl-AAg&lng=113.387899&lat=22.512678&sid=4d76080a9da10fbb31f5cd43396ed6cw&un_area=19_1657_52093_0',
             'Cookie': cookie,
-        }
+        },
+        timeout: 30 * 1000
     }
 }
 
