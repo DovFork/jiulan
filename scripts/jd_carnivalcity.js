@@ -1,6 +1,6 @@
 /*
 京东手机狂欢城活动，每日可获得20+以上京豆（其中20京豆是往期奖励，需第一天参加活动后，第二天才能拿到）
-活动时间: 2021-10-23至2021-11-13
+活动时间: 2022-04-06至2022-04-22
 活动入口：暂无 [活动地址](https://carnivalcity.m.jd.com/)
 
 往期奖励：
@@ -13,17 +13,17 @@ d、 30000名之外，0京豆
 ===================quantumultx================
 [task_local]
 #京东手机狂欢城
-20 0-18/6 * * * jd_carnivalcity.js, tag=京东手机狂欢城, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+1 0,6,12,18 * * * jd_carnivalcity.js, tag=京东手机狂欢城, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 =====================Loon================
 [Script]
-cron "20 0-18/6 * * *" script-path=jd_carnivalcity.js, tag=京东手机狂欢城
+cron "1 0,6,12,18 * * *" script-path=jd_carnivalcity.js, tag=京东手机狂欢城
 
 ====================Surge================
-京东手机狂欢城 = type=cron,cronexp=20 0-18/6 * * *,wake-system=1,timeout=3600,script-path=jd_carnivalcity.js
+京东手机狂欢城 = type=cron,cronexp=1 0,6,12,18 * * *,wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_carnivalcity.js
 
 ============小火箭=========
-京东手机狂欢城 = type=cron,script-path=jd_carnivalcity.js, cronexpr="20 0,6,12,18 * * *", timeout=3600, enable=true
+京东手机狂欢城 = type=cron,script-path=jd_carnivalcity.js, cronexpr="1 0,6,12,18 * * *", timeout=3600, enable=true
 */
 const $ = new Env('京东手机狂欢城');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -41,14 +41,15 @@ if ($.isNode()) {
     cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 const JD_API_HOST = 'https://api.m.jd.com/api';
-const activeEndTime = '2021/11/14 00:00:00+08:00';//活动结束时间
+const activeEndTime = '2022/04/22 00:00:00+08:00';//活动结束时间
 let nowTime = new Date().getTime() + new Date().getTimezoneOffset()*60*1000 + 8*60*60*1000;
 !(async () => {
+    console.log(`\n入口：https://welfare.m.jd.com/#/home\n`);
     if (!cookiesArr[0]) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
         return;
     }
-    $.temp = [];
+    $.newShareCodes = [];
     if (nowTime > new Date(activeEndTime).getTime()) {
         //活动结束后弹窗提醒
         $.msg($.name, '活动已结束', `该活动累计获得京豆：${$.jingBeanNum}个\n请删除此脚本\n咱江湖再见`);
@@ -119,7 +120,7 @@ async function JD818() {
         await getListRank();
         await getListIntegral();
         await getListJbean();
-        await check();//查询抽奖记录(未兑换的，发送提醒通知);
+        //await check();//查询抽奖记录(未兑换的，发送提醒通知);
         await showMsg()
     } catch (e) {
         $.logErr(e)
@@ -589,13 +590,10 @@ function saveJbean(date) {
 }
 async function doHelp() {
     console.log(`\n开始助力好友`);
-    for (let item of  $.temp) {
-        if (!item) continue;
-        const helpRes = await toHelp(item.trim());
-        if (helpRes.data.status === 5) {
-            console.log(`助力机会已耗尽，跳出助力`);
-            break;
-        }
+    for (let j = 0; j < $.newShareCodes.length && $.canHelp; j++) {
+        if (!$.newShareCodes[j]) continue;
+        console.log(`\n${$.UserName} 去助力 ${$.newShareCodes[j]}`);
+        await toHelp($.newShareCodes[j].trim());
     }
 }
 //助力API
@@ -608,10 +606,32 @@ function toHelp(code) {
                     console.log(`${JSON.stringify(err)}`)
                     console.log(`${$.name} API请求失败，请检查网路重试`)
                 } else {
-                    console.log(`助力结果:${data}`);
                     data = JSON.parse(data);
                     if (data && data['code'] === 200) {
-                        if (data['data']['status'] === 6) console.log(`助力成功\n`)
+                        if (data.data.status === 6) {
+                            console.log(`助力成功`)
+                        } else if (data.data.status === 5) {
+                            console.log(`助力机会已耗尽，跳出助力`);
+                            $.canHelp = false
+                        } else if (data.data.status === 4) {
+                            console.log(`助力码 ${code} 已达上限`);
+                            $.delcode = true
+                        } else if (data.data.status === 3) {
+                            console.log(`已经助力过`);
+                        } else if (data.data.status === 2) {
+                            console.log(`助力码 ${code} 过期`);
+                            $.delcode = true
+                        } else if (data.data.status === 1) {
+                            console.log(`不能助力自己`);
+                        } else if (data.msg.indexOf('请求参数不合规') > -1) {
+                            console.log(`助力码 ${code} 助力码有问题`)
+                            $.delcode = true
+                        } else if (data.msg.indexOf('火爆') > -1) {
+                            console.log(`${data.msg}，跳出助力`)
+                            $.canHelp = false
+                        } else {
+                            console.log(`助力码 ${code} 助力结果\n${JSON.stringify(data)}`)
+                        }
                         if (data['data']['jdNums']) $.beans += data['data']['jdNums'];
                     }
                 }
@@ -637,7 +657,7 @@ function getHelp() {
                     if (data.code === 200) {
                         console.log(`\n\n${$.name}互助码每天都变化,旧的不可继续使用`);
                         $.log(`【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${data.data.shareId}\n\n`);
-                        $.temp.push(data.data.shareId);
+                        $.newShareCodes.push(data.data.shareId);
                     } else {
                         console.log(`获取邀请码失败：${JSON.stringify(data)}`);
                         if (data.code === 1002) $.blockAccount = true;
@@ -691,10 +711,10 @@ function getListIntegral() {
                     if (data.code === 200) {
                         $.integralCount = data.data.integralNum || 0;//累计活动积分
                         message += `累计获得积分：${$.integralCount}\n`;
-                        console.log(`开始抽奖，当前积分可抽奖${parseInt($.integralCount / 50)}次\n`);
+                        //console.log(`开始抽奖，当前积分可抽奖${parseInt($.integralCount / 50)}次\n`);
                         for (let i = 0; i < parseInt($.integralCount / 50); i ++) {
-                            await lottery();
-                            await $.wait(500);
+                            //await lottery();
+                            //await $.wait(500);
                         }
                     } else {
                         console.log(`integralRecord失败：${JSON.stringify(data)}`);
