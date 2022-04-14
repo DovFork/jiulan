@@ -589,7 +589,8 @@ function saveJbean(date) {
     })
 }
 async function doHelp() {
-    console.log(`\n开始助力好友`);
+    $.canHelp =true;
+    console.log(`\n开始助力好友`+$.canHelp);
     for (let j = 0; j < $.newShareCodes.length && $.canHelp; j++) {
         if (!$.newShareCodes[j]) continue;
         console.log(`\n${$.UserName} 去助力 ${$.newShareCodes[j]}`);
