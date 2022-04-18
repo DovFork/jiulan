@@ -1,30 +1,25 @@
-// @grant nodejs
 /*
+汪汪乐园
+活动地址: 极速版 汪汪乐园  更新地址：https://github.com/Tsukasa007/my_script
+活动时间：长期
+更新时间：2021-07-4 12:00
+脚本兼容: QuantumultX, Surge,Loon, JSBox, Node.js
 ENV
-
-JOY_COIN_MAXIMIZE =      最大化硬币收益，如果合成后全部挖土后还有空位，则开启此模式（默认开启） 0关闭 1开启
-
+JOYPARK_JOY_START =      只做前几个CK
+JOY_COIN_MAXIMIZE =      最大化硬币收益，如果合成后全部挖土后还有空位，则开启此模式（默认关闭） 0关闭 1开启
 请确保新用户助力过开工位，否则开启游戏了就不算新用户，后面就不能助力开工位了！！！！！！！！！！
-
-如需关闭请添加变量，变量名：HELP_JOYPARK，变量值：false
-
-更新地址：https://github.com/Tsukasa007/my_script
-
-============Quantumultx===============
+=================================Quantumultx=========================
 [task_local]
-#汪汪乐园养joy
-20 0-23/3 * * * jd_joypark_joy.js, tag=汪汪乐园养joy, img-url=https://raw.githubusercontent.com/tsukasa007/icon/master/jd_joypark_joy.png, enabled=true
-
-================Loon==============
+#汪汪乐园
+20 * * * *  https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_joy_park.js, tag=汪汪乐园, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+=================================Loon===================================
 [Script]
-cron "20 0-23/3 * * *" script-path=jd_joypark_joy.js,tag=汪汪乐园养joy
-
-===============Surge=================
-汪汪乐园养joy = type=cron,cronexp="20 0-23/3 * * *",wake-system=1,timeout=3600,script-path=jd_joypark_joy.js
-
-============小火箭=========
-汪汪乐园养joy = type=cron,script-path=jd_joypark_joy.js, cronexpr="20 0-23/3 * * *", timeout=3600, enable=true
-*/
+cron "20 * * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_joy_park.js,tag=汪汪乐园
+===================================Surge================================
+汪汪乐园 = type=cron,cronexp="20 * * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_joy_park.js
+====================================小火箭=============================
+汪汪乐园 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_joy_park.js, cronexpr="20 * * * *", timeout=3600, enable=true
+ */
 const $ = new Env('汪汪乐园养joy');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 
